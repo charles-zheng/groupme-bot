@@ -7,7 +7,7 @@ function respond() {
       botRegex = / added /;
 
   console.log(request);
-  if(request.id = 'system') {
+  if(request.system) {
     if(request.text && botRegex.test(request.text)) {
       this.res.writeHead(200);
       postMessage();
