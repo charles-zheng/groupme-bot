@@ -10,14 +10,15 @@ function respond() {
   this.res.writeHead(200);
   this.res.end();
 
-  console.log(request) if debug;
+  if(debug)
+    console.log(request.attachments[0].user_ids);
 
   if(request.system) {
     if(request.text && newMember.test(request.text)) {
       postMessage("Welcome to Reddit Asylum! This is our social chat. Please change your name to match your IGN. If you haven't already, make sure to read our rules available at https://www.reddit.com/r/RedditAsylumCoC/wiki/index.");
     }
   } else if (request.text && leader.test(request.text)) {
-    postMessage("@fo0 just testing");
+    postMessage("@Fo0 just testing");
   }
 }
 
