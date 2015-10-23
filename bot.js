@@ -10,19 +10,19 @@ function respond() {
   this.res.writeHead(200);
   this.res.end();
 
-  if(debug)
+  if(debug && typeof(request.attachments[0]) !== 'undefined')
     console.log(request.attachments[0].user_ids);
 
   if(request.system) {
     if(request.text && newMember.test(request.text)) {
-      postMessage("Welcome to Reddit Asylum! This is our social chat. Please change your name to match your IGN. If you haven't already, make sure to read our rules available at https://www.reddit.com/r/RedditAsylumCoC/wiki/index.");
+      postMessage("Welcome to Reddit Asylum! This is our social chat. Please change your name to match your IGN. If you haven't already, make sure to read our rules available at https://www.reddit.com/r/RedditAsylumCoC/wiki/index.", []);
     }
   } else if (request.text && leader.test(request.text)) {
-    postMessage("@Fo0 just testing");
+    postMessage("@Fo0 just testing", [ {type: 'mentions', user_ids: ['30802922'] } ]);
   }
 }
 
-function postMessage(botResponse) {
+function postMessage(botResponse, attachments) {
   var options, body, botReq;
 
   options = {
@@ -32,8 +32,9 @@ function postMessage(botResponse) {
   };
 
   body = {
+    "attachments": attachments,
     "bot_id" : botID,
-    "text" : botResponse
+    "text"   : botResponse
   };
 
   console.log('sending ' + botResponse + ' to ' + botID);
