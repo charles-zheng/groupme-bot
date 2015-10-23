@@ -1,27 +1,25 @@
 var HTTPS = require('https');
-
+var debug = process.env.DEBUG || false;
 var botID = process.env.BOT_ID;
 
 function respond() {
-  var request = JSON.parse(this.req.chunks[0]),
-      botRegex = / added /;
+  var request   = JSON.parse(this.req.chunks[0]),
+      newMember = / added /,
+      leader    = /^@leaders$/;
+
+  this.res.writeHead(200);
+  this.res.end();
 
   if(request.system) {
-    if(request.text && botRegex.test(request.text)) {
-      this.res.writeHead(200);
-      postMessage();
-      this.res.end();
-    } else {
-      this.res.writeHead(200);
-      this.res.end();
-    }
+    if(request.text && newMember.test(request.text)) {
+      postMessage("Welcome to Reddit Asylum! This is our social chat. Please change your name to match your IGN. If you haven't already, make sure to read our rules available at https://www.reddit.com/r/RedditAsylumCoC/wiki/index.");
+  } else if (request.text && leader.test(request.text)) {
+    postMessage("@fo0 just testing");
   }
 }
 
-function postMessage() {
-  var botResponse, options, body, botReq;
-
-  botResponse = "Welcome to Reddit Asylum! Please change your name to match your IGN. If you haven't already, make sure to read our rules available at https://www.reddit.com/r/RedditAsylumCoC/wiki/index.";
+function postMessage(botResponse) {
+  var options, body, botReq;
 
   options = {
     hostname: 'api.groupme.com',

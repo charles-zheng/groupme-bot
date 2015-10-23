@@ -1,4 +1,4 @@
-var http, director, cool, bot, router, server, port;
+var http, director, bot, router, server, port;
 
 http        = require('http');
 director    = require('director');
