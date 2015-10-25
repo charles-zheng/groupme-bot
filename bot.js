@@ -5,6 +5,8 @@ var raBotID  = process.env.RA_BOT_ID;
 var rawBotID = process.env.RAW_BOT_ID;
 var fo0BotID = process.env.FO0_BOT_ID;
 
+var delayTime = 1000;
+
 function respond() {
   var request   = JSON.parse(this.req.chunks[0]),
     newMember   = / added /,
@@ -40,10 +42,11 @@ function respond() {
       } else if (botID == rawBotID) {
         message = "Welcome to Reddit Asylum! This is our war chat. Please change your name to match your IGN. We use this room for posting and discussing war attack strategies."
       }
-      setTimeout(postMessage(message, [], botID), 3000);
+      setTimeout(postMessage(message, [], botID), delayTime);
     }
   } else if (request.text && leader.test(request.text)) {
-    setTimeout(postMessage("Hey leaders you're being paged! [@GusGus @Michael @Lee1104 @Ryan @JLU @Fowla @Champ @Wiiii @Blareposeidon2082 @Bucket @419GottaMinute @SonOfGusGus (Asylum)]",
+    setTimeout(function() {
+      postMessage("Hey leaders you're being paged! [@GusGus @Michael @Lee1104 @Ryan @JLU @Fowla @Champ @Wiiii @Blareposeidon2082 @Bucket @419GottaMinute @SonOfGusGus (Asylum)]",
                 [
                   {
                     loci: [ [33, 7], [41, 8], [50, 8], [59, 5], [65, 4], [70, 6],
@@ -53,44 +56,47 @@ function respond() {
                                '24727461', '25070550', '19112175', '12076411',
                                '23434057', '27333432', '19571350', '25478014']
                   }
-                ], botID), 1000);
+                ], botID);
+    }, delayTime);
   } else if (request.text && troll.test(request.text)) {
-    setTimeout(postMessage("Troll you're being summoned [@SonOfGusGus (Asylum)]",
+    setTimeout(function() {
+      postMessage("Troll you're being summoned [@SonOfGusGus (Asylum)]",
                 [
                   {
                     loci: [ [29, 21] ],
                     type: 'mentions',
                     user_ids: [ '25478014' ]
                   }
-                ], botID), 1000);
+                ], botID);
+    }, delayTime);
   } else if (request.text && gif.test(request.text)) {
-    res = gif.exec(request.text)
+    var res = gif.exec(request.text)
 
-    options = {
+    var options = {
       hostname: 'api.giphy.com',
-      path: '/v1/gifs/random',
-      method: 'GET',
-      api_key: 'dc6zaTOxFJmzC',
-      tag: encodeURIComponent(res[1])
+      path: '/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=' + encodeURIComponent(res[1])
     };
 
-    gifReq = HTTPS.request(options, function(res) {
-      if(res.statusCode == 202) {
-        console.log(res);
-      } else {
-        console.log('bad status code ' + res.statusCode);
-      }
-    });
+    callback = function(response) {
+      str = '';
 
+      response.on('data', function(chunk) {
+        str += chunk;
+      });
+      response.on('end', function() {
+        str = JSON.parse(str);
+        if (typeof(str.data.image_original_url) !== 'undefined') {
+          msg = str.data.image_original_url;
+        } else {
+          msg = "There's no such GIFs silly";
+        }
+        setTimeout(function() {
+          postMessage(msg, [], botID);
+        }, delayTime);
+      });
+    };
 
-    gifReq.on('error', function(err) {
-      console.log('error posting message '  + JSON.stringify(err));
-    });
-    gifReq.on('timeout', function(err) {
-      console.log('timeout posting message '  + JSON.stringify(err));
-    });
-    gifReq.end();//JSON.stringify(body));
-
+    HTTPS.request(options, callback).end();
   }
 }
 
@@ -127,6 +133,5 @@ function postMessage(botResponse, attachments, botID) {
   });
   botReq.end(JSON.stringify(body));
 }
-
 
 exports.respond = respond;
