@@ -5,7 +5,18 @@ director    = require('director');
 bot         = require('./bot.js');
 
 router = new director.http.Router({
-  '/' : {
+  '/'    : {
+    get: ping
+  },
+  '/ra'  : {
+    post: bot.respond,
+    get: ping
+  },
+  '/raw' : {
+    post: bot.respond,
+    get: ping
+  },
+  '/fo0' : {
     post: bot.respond,
     get: ping
   }
