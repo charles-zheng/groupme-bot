@@ -22,7 +22,7 @@ var triggers = {
     message: "Welcome to Reddit Asylum! This is our war chat. Please change your name to match your IGN. We use this room for posting and discussing war attack strategies.",
     attachments: []
   },
-  zapquakechart: {
+  zapQuakeChart: {
     regex: /^\/zapquakechart$/i,
     system: false,
     bots: ['ra', 'raw', 'fo0'],
@@ -59,12 +59,19 @@ var triggers = {
     regex: /^\/gif (.+)/i,
     system: false,
     bots: ['ra', 'fo0'],
+    message: 'disabled until limits implemented. sorry not sorry',
+    attachments: []
+  }
+  /*gif: {
+    regex: /^\/gif (.+)/i,
+    system: false,
+    bots: ['ra', 'fo0'],
     message: 'data.image_original_url',
     failMessage: "There's no such gif silly",
     attachments: [],
     apiHost: 'api.giphy.com',
     apiPath: '/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=$$1'
-  }
+  }*/
 };
 
 function getBot(path) {
