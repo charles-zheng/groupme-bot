@@ -29,6 +29,17 @@ var triggers = {
     message: 'https://i.imgur.com/NMuCEB1.jpg',
     attachments: []
   },
+  test: {
+    regex: /^\/test$/i,
+    system: false,
+    bots: ['fo0'],
+    message: '',
+    attachements: [{
+                    loci: [[0, 0]],
+                    type: 'mentions',
+                    user_ids: ['30802922']
+                  }]
+  },
   leader: {
     regex: /@leaders/i,
     system: false,
