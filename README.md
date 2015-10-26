@@ -1,13 +1,10 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-A simple Node Group Me Bot.
-=======
-The OpenShift `nodejs` cartridge documentation can be found at:
+A simple Node Group Me Bot. Based on https://github.com/groupme/bot-tutorial-nodejs
 
-http://openshift.github.io/documentation/oo_cartridge_guide.html#nodejs
->>>>>>> 70076c6... Creating template
-=======
-The OpenShift `nodejs` cartridge documentation can be found at:
+Requirements:
+You will need to setup a bot and attach it to your groupme group. You can do that at https://dev.groupme.com/bots.
 
-http://openshift.github.io/documentation/oo_cartridge_guide.html#nodejs
->>>>>>> 75fd9cd... Creating template
+You then need to setup an evironment variable with your bot's ID. If you're hosting it at openshift.com (recommended) you should install their command line tool and use the command:
+
+ rhc env set <Variable>=<Value> <Variable2>=<Value2> -a App_Name
+
+ You'll have to add openshift as a remote to be able to deploy to openshift.
