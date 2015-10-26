@@ -35,8 +35,10 @@ server = http.createServer(function (req, res) {
   });
 });
 
-port = Number(process.env.PORT || 5000);
-server.listen(port);
+port = Number(process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3002);
+ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+
+server.listen(port, ip);
 
 function ping() {
   this.res.writeHead(200);
