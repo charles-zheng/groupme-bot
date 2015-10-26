@@ -1,4 +1,6 @@
 var HTTPS = require('https');
+var db    = require('./db.js');
+
 var debug = process.env.DEBUG || false;
 
 var raBotID  = process.env.RA_BOT_ID;
@@ -7,7 +9,13 @@ var fo0BotID = process.env.FO0_BOT_ID;
 
 var delayTime = 1000;
 
-var triggers = {
+var triggers = '';
+db.getTriggers(function(res){
+  triggers = res;
+});
+
+
+/*var triggers = {
   newMemberRa: {
     regex: / added /,
     system: true,
@@ -71,8 +79,8 @@ var triggers = {
     attachments: [],
     apiHost: 'api.giphy.com',
     apiPath: '/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=$$1'
-  }*/
-};
+  }
+}; */
 
 function getBot(path) {
   var bot = {};
@@ -106,9 +114,10 @@ function respond() {
   for (var trigger in triggers) {
     trigger = triggers[trigger];
     if((trigger.system && request.system) || (!trigger.system && !request.system)){
-      if (trigger.bots.indexOf(currentBot.type) > -1 && request.text && trigger.regex.test(request.text)){
+      var triggerReg = new RegExp(trigger.regex, "i");
+      if (trigger.bots.indexOf(currentBot.type) > -1 && request.text && triggerReg.test(request.text)){
         if(trigger.apiHost && trigger.apiPath) {
-          val = trigger.regex.exec(request.text);
+          val = triggerReg.exec(request.text);
           apiRequest(trigger.apiHost, trigger.apiPath, val[1], trigger.message, trigger.failMessage, currentBot.id);
         } else {
           setTimeout(function() {
