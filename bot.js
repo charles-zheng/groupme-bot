@@ -1,9 +1,3 @@
-//  if(debug && typeof(request.attachments[0]) !== 'undefined') {
-//    console.log(request.attachments[0]);
-//    console.log(request.attachments[0].loci);
-//    console.log(request.attachments[0].user_ids);
-//  }
-
 var HTTPS = require('https');
 var debug = process.env.DEBUG || false;
 
@@ -26,6 +20,13 @@ var triggers = {
     system: true,
     bots: ['raw'],
     message: "Welcome to Reddit Asylum! This is our war chat. Please change your name to match your IGN. We use this room for posting and discussing war attack strategies.",
+    attachments: []
+  },
+  zapquakechart: {
+    regex: /^\/zapquakechart$/i,
+    system: false,
+    bots: ['ra', 'raw', 'fo0'],
+    message: 'https://i.imgur.com/NMuCEB1.jpg',
     attachments: []
   },
   leader: {
@@ -99,7 +100,6 @@ function respond() {
     trigger = triggers[trigger];
     if((trigger.system && request.system) || (!trigger.system && !request.system)){
       if (trigger.bots.indexOf(currentBot.type) > -1 && request.text && trigger.regex.test(request.text)){
-        console.log(trigger.bots.indexOf(currentBot.type));
         if(trigger.apiHost && trigger.apiPath) {
           val = trigger.regex.exec(request.text);
           apiRequest(trigger.apiHost, trigger.apiPath, val[1], trigger.message, trigger.failMessage, currentBot.id);
