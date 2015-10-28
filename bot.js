@@ -17,11 +17,14 @@ var debug = process.env.DEBUG || false;
 
 var raBotID  = process.env.RA_BOT_ID;
 var rawBotID = process.env.RAW_BOT_ID;
+var ralBotID = process.env.RAL_BOT_ID;
 var fo0BotID = process.env.FO0_BOT_ID;
+var ralvBotId = process.env.RALV_BOT_ID;
 
 var delayTime = 1000;
 
 var triggers = '';
+
 db.getTriggers(function(res){
   triggers = res;
 });
@@ -39,8 +42,16 @@ function getBot(path) {
       bot.id = rawBotID;
       break;
     case "/fo0":
-      bot.type = 'fo0'
+      bot.type = 'fo0';
       bot.id = fo0BotID;
+      break;
+    case "/ral":
+      bot.type = 'ral';
+      bot.id = ralBotID;
+      break;
+    case "/ralv":
+      bot.type = 'ralv';
+      bot.id = ralvBotId;
       break;
   }
 

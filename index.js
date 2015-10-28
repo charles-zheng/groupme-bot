@@ -17,6 +17,14 @@ router = new director.http.Router({
     post: bot.respond,
     get: ping
   },
+  '/ral' : {
+    post: bot.respond,
+    get: ping
+  },
+  '/ralv' : {
+    post: bot.respond,
+    get: ping
+  },
   '/fo0' : {
     post: bot.respond,
     get: ping
