@@ -1,17 +1,6 @@
-  /*gif: {
-    regex: /^\/gif (.+)/i,
-    system: false,
-    bots: ['ra', 'fo0'],
-    message: 'data.image_original_url',
-    failMessage: "There's no such gif silly",
-    attachments: [],
-    apiHost: 'api.giphy.com',
-    apiPath: '/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=$$1'
-  }
-}; */
-
 var HTTPS = require('https');
 var db    = require('./db.js');
+var sysCommands = require('./sys-commands.js');
 
 var debug = process.env.DEBUG || false;
 
@@ -68,21 +57,27 @@ function respond() {
     return;
   }
 
-  for (var trigger in triggers) {
-    trigger = triggers[trigger];
-    if((trigger.system && request.system) || (!trigger.system && !request.system)){
-      var triggerReg = new RegExp(trigger.regex, "i");
-      if (trigger.bots.indexOf(currentBot.type) > -1 && request.text && triggerReg.test(request.text)){
-        var val = triggerReg.exec(request.text);
-        if(trigger.apiHost && trigger.apiPath) {
-          apiRequest(trigger.apiHost, trigger.apiPath, val[1], trigger.message, trigger.failMessage, function() {
-            sendDelayedMessage(trigger.message, trigger.attachments, currentBot.id);
-          });
-        } else {
-          var msg = messageTokenReplace(trigger, val);
-          sendDelayedMessage(msg, trigger.attachments, currentBot.id);
+  var checkSys = sysCommands.checkSysCommands(request, triggers);
+  if (checkSys) {
+    sendDelayedMessage(checkSys, [], currentBot.id);
+  } else {
+    for (var trigger in triggers) {
+      trigger = triggers[trigger];
+
+      if((trigger.system && request.system) || (!trigger.system && !request.system)){
+        var triggerReg = new RegExp(trigger.regex, "i");
+        if (trigger.bots.indexOf(currentBot.type) > -1 && request.text && triggerReg.test(request.text)){
+          var val = triggerReg.exec(request.text);
+          if(trigger.apiHost && trigger.apiPath) {
+            apiRequest(trigger.apiHost, trigger.apiPath, val[1], trigger.message, trigger.failMessage, function(msg) {
+              sendDelayedMessage(msg, trigger.attachments, currentBot.id);
+            });
+          } else {
+            var msg = messageTokenReplace(trigger, val);
+            sendDelayedMessage(msg, trigger.attachments, currentBot.id);
+          }
+          break;
         }
-        break;
       }
     }
   }
@@ -90,25 +85,6 @@ function respond() {
 
 function messageTokenReplace(trigger, val) {
   var str = trigger.message;
-  var details = '';
-
-  //get trigger names
-  var names = '';
-  for (trig in triggers) {
-    names += triggers[trig].name + ', ';
-    if (triggers[trig].name == val[1])
-      details = triggers[trig];
-  }
-  names = names.substring(0, names.length - 2);
-  str = str.replace('$triggers.name', names);
-
-  //insert trigger document
-  if (trigger.name == "details") {
-    details = JSON.stringify(details);
-    details = details.replace(/,/g, ',\n');
-    str = str.replace('$$1', details);
-    str = str.replace('$$1', 'command not found');
-  }
 
   return str;
 }
@@ -119,7 +95,7 @@ function sendDelayedMessage(msg, attachments, botID) {
   }, delayTime);
 }
 
-function apiRequest(host, path, input, returnProperty, failMsg, callback) {
+function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
   path = path.replace("$$1", encodeURIComponent(input));
 
   var options = {
@@ -138,6 +114,7 @@ function apiRequest(host, path, input, returnProperty, failMsg, callback) {
     response.on('end', function() {
       str = JSON.parse(str);
       msg = str;
+
       for (prop in props) {
         if(typeof(msg[props[prop]]) !== 'undefined') {
           msg = msg[props[prop]];
@@ -145,7 +122,8 @@ function apiRequest(host, path, input, returnProperty, failMsg, callback) {
           msg = failMsg;
         }
       }
-      callback(msg);
+      console.log(msg);
+      apiCallback(msg);
     });
   };
 
