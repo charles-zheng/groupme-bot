@@ -1,18 +1,20 @@
+//load modules
 var HTTPS = require('https');
 var db    = require('./db.js');
 var sysCommands = require('./sys-commands.js');
 
+//load enviroment conifg
 var debug = process.env.DEBUG || false;
-
 var raBotID  = process.env.RA_BOT_ID;
 var rawBotID = process.env.RAW_BOT_ID;
 var ralBotID = process.env.RAL_BOT_ID;
 var fo0BotID = process.env.FO0_BOT_ID;
 var ralvBotId = process.env.RALV_BOT_ID;
 
+//bot variables
 var delayTime = 1000;
-
 var triggers = '';
+var noFun = false;
 
 db.getTriggers(function(res){
   triggers = res;
@@ -59,16 +61,35 @@ function respond() {
 
   var checkSys = sysCommands.checkSysCommands(request, triggers);
   if (checkSys) {
-    sendDelayedMessage(checkSys, [], currentBot.id);
+    if (checkSys == 'nofun') {
+      if (noFun) {
+        sendDelayedMessage("I can't be any less fun at the moment", [], currentBot.id);
+      } else {
+        noFun = true;
+        sendDelayedMessage("I'm no fun anymore!", [], currentBot.id);
+      }
+    } else if (checkSys == 'fun') {
+      if (!noFun) {
+        sendDelayedMessage("I'm already as much fun as I can be!", [], currentBot.id);
+      } else {
+        noFun = false;
+        sendDelayedMessage("I'm fun again!", [], currentBot.id);
+      }
+    } else {
+      sendDelayedMessage(checkSys, [], currentBot.id);
+    }
   } else {
     for (var trigger in triggers) {
       trigger = triggers[trigger];
 
-      if((trigger.system && request.system) || (!trigger.system && !request.system)){
+      if ((trigger.system && request.system) || (!trigger.system && !request.system)) {
         var triggerReg = new RegExp(trigger.regex, "i");
         if (trigger.bots.indexOf(currentBot.type) > -1 && request.text && triggerReg.test(request.text)){
           var val = triggerReg.exec(request.text);
-          if(trigger.apiHost && trigger.apiPath) {
+
+          if (noFun && trigger.fun){
+            sendDelayedMessage("Sorry I'm no fun right now.", [], currentBot.id);
+          } else if (trigger.apiHost && trigger.apiPath) {
             apiRequest(trigger.apiHost, trigger.apiPath, val[1], trigger.message, trigger.failMessage, function(msg) {
               sendDelayedMessage(msg, trigger.attachments, currentBot.id);
             });
@@ -116,13 +137,13 @@ function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
       msg = str;
 
       for (prop in props) {
-        if(typeof(msg[props[prop]]) !== 'undefined') {
+        if (typeof(msg[props[prop]]) !== 'undefined') {
           msg = msg[props[prop]];
         } else {
           msg = failMsg;
         }
       }
-      console.log(msg);
+
       apiCallback(msg);
     });
   };
@@ -148,7 +169,7 @@ function postMessage(botResponse, attachments, botID) {
   console.log('sending ' + botResponse + ' to ' + botID);
 
   botReq = HTTPS.request(options, function(res) {
-      if(res.statusCode == 202) {
+      if (res.statusCode == 202) {
         //neat
       } else {
         console.log('rejecting bad status code ' + res.statusCode);
