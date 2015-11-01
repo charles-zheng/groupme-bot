@@ -1,28 +1,30 @@
-var sysCommands = [funCmd, noFunCmd, triggersCmd, detailCmd];
-//put this in the db later
-var mods = ['30802922', '25478014', '15032435', '27333432', '26027141'];
+var fun_mode = true;
+var sysCommands = [funCmd, noFunCmd, triggersCmd, detailCmd, addModCmd];
 
-function checkSysCommands(request, triggers) {
-
+exports.checkSysCommands = function(request, triggers) {
   for (command in sysCommands) {
     var test = sysCommands[command](request, triggers);
-    if (test) {
-      if (mods.indexOf(request.user_id) == -1){
-        return "You're not the boss of me.";
-      } else {
-        return test;
-      }
-    }
+    if (test)
+      return test;
   }
 
   return false;
+}
+
+exports.fun_mode = function(){
+  return fun_mode;
 }
 
 function funCmd(request, triggers) {
   var regex = /^\/fun$/;
 
   if (regex.test(request.text)) {
-    return "fun";
+    if (fun_mode) {
+      return "I'm already as much fun as I can be!";
+    } else {
+      fun_mode = true;
+      return "I'm fun again!";
+    }
   } else {
     return false;
   }
@@ -32,7 +34,12 @@ function noFunCmd(request, triggers) {
   var regex = /^\/nofun$/;
 
   if (regex.test(request.text)) {
-    return "nofun";
+    if (!fun_mode) {
+      return "I can't be any less fun right now.";
+    } else {
+      fun_mode = false;
+      return "I'm no fun anymore!";
+    }
   } else {
     return false;
   }
@@ -74,4 +81,12 @@ function detailCmd(request, triggers) {
   }
 }
 
-exports.checkSysCommands = checkSysCommands;
+function addModCmd(request, triggers) {
+  var regex = /^\/addmod (.+) (.+)/;
+
+  if (regex.test(request.text)) {
+    return "addmod";
+  } else {
+    return false;
+  }
+}

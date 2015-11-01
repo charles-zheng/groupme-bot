@@ -1,49 +1,37 @@
 //load modules
-var HTTPS = require('https');
-var db    = require('./db.js');
 var sysCommands = require('./sys-commands.js');
-
-//load enviroment conifg
-var debug = process.env.DEBUG || false;
-var raBotID  = process.env.RA_BOT_ID;
-var rawBotID = process.env.RAW_BOT_ID;
-var ralBotID = process.env.RAL_BOT_ID;
-var fo0BotID = process.env.FO0_BOT_ID;
-var ralvBotId = process.env.RALV_BOT_ID;
+var config      = require('./config/config.js');
+var HTTPS       = require('https');
+var db          = require('./db.js');
 
 //bot variables
-var delayTime = 1000;
 var triggers = '';
-var noFun = false;
+//this doesn't belong here!
+var mods = ['30802922', '25478014', '15032435', '27333432', '26027141', '19112175', '12076411', '11713960'];
 
-db.getTriggers(function(res){
-  triggers = res;
-});
+function getTriggers() {
+  db.getTriggers(function(res){
+    triggers = res;
+  });
+}
+
+//fix this
+function getMods() {
+  db.getMods(function(res){
+    var mmods = res;
+  });
+}
+
+getTriggers();
+getMods();
 
 function getBot(path) {
   var bot = {};
+  var key = path.substring(1, path.length);
 
-  switch(path){
-    case "/ra":
-      bot.type = 'ra';
-      bot.id = raBotID;
-      break;
-    case "/raw":
-      bot.type = 'raw';
-      bot.id = rawBotID;
-      break;
-    case "/fo0":
-      bot.type = 'fo0';
-      bot.id = fo0BotID;
-      break;
-    case "/ral":
-      bot.type = 'ral';
-      bot.id = ralBotID;
-      break;
-    case "/ralv":
-      bot.type = 'ralv';
-      bot.id = ralvBotId;
-      break;
+  if (config.bots[key]) {
+    bot.type = key;
+    bot.id = config.bots[key];
   }
 
   return bot;
@@ -52,7 +40,7 @@ function getBot(path) {
 function respond() {
   var request = JSON.parse(this.req.chunks[0]);
   var currentBot = getBot(this.req.url.toLowerCase());
-
+  console.log(sysCommands.fun_mode());
   this.res.writeHead(200);
   this.res.end();
   if (request.sender_type == 'bot') {
@@ -61,23 +49,12 @@ function respond() {
 
   var checkSys = sysCommands.checkSysCommands(request, triggers);
   if (checkSys) {
-    if (checkSys == 'nofun') {
-      if (noFun) {
-        sendDelayedMessage("I can't be any less fun at the moment", [], currentBot.id);
-      } else {
-        noFun = true;
-        sendDelayedMessage("I'm no fun anymore!", [], currentBot.id);
-      }
-    } else if (checkSys == 'fun') {
-      if (!noFun) {
-        sendDelayedMessage("I'm already as much fun as I can be!", [], currentBot.id);
-      } else {
-        noFun = false;
-        sendDelayedMessage("I'm fun again!", [], currentBot.id);
-      }
-    } else {
-      sendDelayedMessage(checkSys, [], currentBot.id);
+    if (mods.indexOf(request.user_id) == -1) {
+      sendDelayedMessage("You're not the boss of me");
+      return;
     }
+
+    sendDelayedMessage(checkSys, [], currentBot.id);
   } else {
     for (var trigger in triggers) {
       trigger = triggers[trigger];
@@ -87,7 +64,7 @@ function respond() {
         if (trigger.bots.indexOf(currentBot.type) > -1 && request.text && triggerReg.test(request.text)){
           var val = triggerReg.exec(request.text);
 
-          if (noFun && trigger.fun){
+          if (!sysCommands.fun_mode() && trigger.fun){
             sendDelayedMessage("Sorry I'm no fun right now.", [], currentBot.id);
           } else if (trigger.apiHost && trigger.apiPath) {
             apiRequest(trigger.apiHost, trigger.apiPath, val[1], trigger.message, trigger.failMessage, function(msg) {
@@ -113,7 +90,7 @@ function messageTokenReplace(trigger, val) {
 function sendDelayedMessage(msg, attachments, botID) {
   setTimeout(function() {
     postMessage(msg, attachments, botID);
-  }, delayTime);
+  }, config.delay_time);
 }
 
 function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
