@@ -1,5 +1,4 @@
 var db_config   = require('../config/db-config.js');
-
 var mongoDB     = require('mongodb').MongoClient;
 
 var connection_string = 'mongodb://127.0.0.1:27017/nodejs';
@@ -25,6 +24,17 @@ exports.addMod = function(mod, callback) {
   mongoDB.connect(connection_string, function(err, db) {
     if(err) throw err;
     var allDocs = db.collection('mods').insert(mod, function(err, result){
+      if (callback)
+        callback(result);
+      db.close();
+    });
+  });
+};
+
+exports.addTrigger = function(trigger, callback) {
+  mongoDB.connect(connection_string, function(err, db) {
+    if(err) throw err;
+    var allDocs = db.collection('triggers').insert(trigger, function(err, result){
       if (callback)
         callback(result);
       db.close();

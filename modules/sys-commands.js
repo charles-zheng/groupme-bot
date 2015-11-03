@@ -1,9 +1,9 @@
 var fun_mode = true;
 var sysCommands = [funCmd, noFunCmd, triggersCmd, detailCmd];
 
-exports.checkSysCommands = function(request, triggers) {
+exports.checkSysCommands = function(request, triggers, bots) {
   for (command in sysCommands) {
-    var test = sysCommands[command](request, triggers);
+    var test = sysCommands[command](request, triggers, bots);
     if (test)
       return test;
   }

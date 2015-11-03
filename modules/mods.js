@@ -60,9 +60,7 @@ function addModCmd(request, owner, callback) {
     }
 
     var val = regex.exec(request.text);
-    console.log(val);
     db.findMod(val[1], function(res){
-      console.log(res);
       if (res) {
         callback(true, "User already a mod");
       } else {

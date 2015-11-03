@@ -2,17 +2,13 @@
 var sysCommands = require('./modules/sys-commands.js');
 var db          = require('./modules/db.js');
 var mods        = require('./modules/mods.js');
-
+var triggers    = require('./modules/triggers.js');
 var config      = require('./config/config.js');
 var HTTPS       = require('https');
 
-//bot variables
-var triggers, mods;
-//['30802922', '25478014', '15032435', '27333432', '26027141', '19112175', '12076411', '11713960'];
-
 function getTriggers() {
   db.getTriggers(function(res){
-    triggers = res;
+    triggers.setTriggers(res);
   });
 }
 
@@ -21,9 +17,6 @@ function getMods() {
     mods.setMods(res);
   });
 }
-
-getTriggers();
-getMods();
 
 function getBot(path) {
   var bot = {};
@@ -37,9 +30,15 @@ function getBot(path) {
   return bot;
 }
 
+getTriggers();
+getMods();
+
 function respond() {
   var request = JSON.parse(this.req.chunks[0]);
   var currentBot = getBot(this.req.url.toLowerCase());
+  var isMod = mods.isMod(request.user_id);
+  var bots = config.bots;
+  var fun_mode = sysCommands.fun_mode();
 
   this.res.writeHead(200);
   this.res.end();
@@ -52,38 +51,27 @@ function respond() {
       sendDelayedMessage(result, [], currentBot.id);
   });
 
-  var checkSys = sysCommands.checkSysCommands(request, triggers);
+  triggers.checkTriggerCommands(request, currentBot, fun_mode, bots, isMod, function(check, api, result, attachments){
+    if (check){
+      if (api) {
+        apiRequest(result.apiHost, result.apiPath, trigger.val, result.message, result.failMessage, function(msg) {
+          sendDelayedMessage(msg, result.attachments, currentBot.id);
+        });
+      } else {
+        sendDelayedMessage(result, attachments, currentBot.id);
+      }
+    }
+  });
+
+  var checkSys = sysCommands.checkSysCommands(request, triggers.getTriggers());
 
   if (checkSys) {
-    if (!mods.isMod(request.user_id)) {
+    if (!isMod) {
       sendDelayedMessage("You're not the boss of me", [], currentBot.id);
       return;
     }
 
     sendDelayedMessage(checkSys, [], currentBot.id);
-  } else {
-    for (var trigger in triggers) {
-      trigger = triggers[trigger];
-
-      if ((trigger.system && request.system) || (!trigger.system && !request.system)) {
-        var triggerReg = new RegExp(trigger.regex, "i");
-        if (trigger.bots.indexOf(currentBot.type) > -1 && request.text && triggerReg.test(request.text)){
-          var val = triggerReg.exec(request.text);
-
-          if (!sysCommands.fun_mode() && trigger.fun){
-            sendDelayedMessage("Sorry I'm no fun right now.", [], currentBot.id);
-          } else if (trigger.apiHost && trigger.apiPath) {
-            apiRequest(trigger.apiHost, trigger.apiPath, val[1], trigger.message, trigger.failMessage, function(msg) {
-              sendDelayedMessage(msg, trigger.attachments, currentBot.id);
-            });
-          } else {
-            var msg = messageTokenReplace(trigger, val);
-            sendDelayedMessage(msg, trigger.attachments, currentBot.id);
-          }
-          break;
-        }
-      }
-    }
   }
 }
 
