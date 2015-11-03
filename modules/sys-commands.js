@@ -1,5 +1,5 @@
 var fun_mode = true;
-var sysCommands = [funCmd, noFunCmd, triggersCmd, detailCmd, addModCmd];
+var sysCommands = [funCmd, noFunCmd, triggersCmd, detailCmd];
 
 exports.checkSysCommands = function(request, triggers) {
   for (command in sysCommands) {
@@ -76,16 +76,6 @@ function detailCmd(request, triggers) {
     details = JSON.stringify(details);
     details = details.replace(/,/g, ',\n');
     return "The following triggers are currently active [" + details + "]";
-  } else {
-    return false;
-  }
-}
-
-function addModCmd(request, triggers) {
-  var regex = /^\/addmod (.+) (.+)/;
-
-  if (regex.test(request.text)) {
-    return "addmod";
   } else {
     return false;
   }

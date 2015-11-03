@@ -1,13 +1,14 @@
 //load modules
-var sysCommands = require('./sys-commands.js');
+var sysCommands = require('./modules/sys-commands.js');
+var db          = require('./modules/db.js');
+var mods        = require('./modules/mods.js');
+
 var config      = require('./config/config.js');
 var HTTPS       = require('https');
-var db          = require('./db.js');
 
 //bot variables
-var triggers = '';
-//this doesn't belong here!
-var mods = ['30802922', '25478014', '15032435', '27333432', '26027141', '19112175', '12076411', '11713960'];
+var triggers, mods;
+//['30802922', '25478014', '15032435', '27333432', '26027141', '19112175', '12076411', '11713960'];
 
 function getTriggers() {
   db.getTriggers(function(res){
@@ -15,10 +16,9 @@ function getTriggers() {
   });
 }
 
-//fix this
 function getMods() {
   db.getMods(function(res){
-    var mmods = res;
+    mods.setMods(res);
   });
 }
 
@@ -40,17 +40,23 @@ function getBot(path) {
 function respond() {
   var request = JSON.parse(this.req.chunks[0]);
   var currentBot = getBot(this.req.url.toLowerCase());
-  console.log(sysCommands.fun_mode());
+
   this.res.writeHead(200);
   this.res.end();
   if (request.sender_type == 'bot') {
     return;
   }
 
+  mods.checkModCommands(request, config.bot_owner, function(check, result){
+    if (check)
+      sendDelayedMessage(result, [], currentBot.id);
+  });
+
   var checkSys = sysCommands.checkSysCommands(request, triggers);
+
   if (checkSys) {
-    if (mods.indexOf(request.user_id) == -1) {
-      sendDelayedMessage("You're not the boss of me");
+    if (!mods.isMod(request.user_id)) {
+      sendDelayedMessage("You're not the boss of me", [], currentBot.id);
       return;
     }
 

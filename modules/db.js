@@ -1,4 +1,4 @@
-var db_config   = require('./config/db-config.js');
+var db_config   = require('../config/db-config.js');
 
 var mongoDB     = require('mongodb').MongoClient;
 
@@ -21,10 +21,31 @@ function getAllDocuments(collection, callback) {
   });
 }
 
+exports.addMod = function(mod, callback) {
+  mongoDB.connect(connection_string, function(err, db) {
+    if(err) throw err;
+    var allDocs = db.collection('mods').insert(mod, function(err, result){
+      if (callback)
+        callback(result);
+      db.close();
+    });
+  });
+};
+
 exports.getMods = function(callback) {
   getAllDocuments(db_config.mods_table, callback);
 };
 
 exports.getTriggers = function(callback) {
   getAllDocuments(db_config.triggers_table, callback);
+};
+
+exports.findMod = function(mod, callback) {
+  mongoDB.connect(connection_string, function(err, db) {
+    if(err) throw err;
+    var allDocs = db.collection('mods').findOne({name: mod},function(err, docs){
+      callback(docs);
+      db.close();
+    });
+  });
 };
