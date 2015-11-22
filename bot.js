@@ -20,11 +20,12 @@ function getMods() {
 
 function getBot(path) {
   var bot = {};
-  var key = path.substring(1, path.length);
+  path = path.toLowerCase();
+//  var key = path.substring(1, path.length);
 
-  if (config.bots[key]) {
-    bot.type = key;
-    bot.id = config.bots[key];
+  if (config.bots[path]) {
+    bot.type = path;
+    bot.id = config.bots[path];
   }
 
   return bot;
@@ -33,9 +34,10 @@ function getBot(path) {
 getTriggers();
 getMods();
 
-function respond() {
+function respond(botRoom) {
   var request = JSON.parse(this.req.chunks[0]);
-  var currentBot = getBot(this.req.url.toLowerCase());
+  var currentBot = getBot(botRoom);
+  //var currentBot = getBot(this.req.url.toLowerCase());
   var isMod = mods.isMod(request.user_id);
   var bots = config.bots;
   var fun_mode = sysCommands.fun_mode();
