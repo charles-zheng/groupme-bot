@@ -1,5 +1,5 @@
 var triggers;
-var modCommands = [addTriggerCmd];
+var modCommands = [addCommandCmd, describeCmd];
 db = require('./db.js');
 
 exports.checkTriggerCommands = function(request, currentBot, funMode, bots, isMod, callback) {
@@ -33,12 +33,22 @@ exports.setTriggers = function(triggerHash) {
   triggers = triggerHash;
 }
 
-exports.getTriggers = function(triggerHash) {
+exports.getTriggers = function() {
   return triggers;
 }
 
-function addTriggerCmd(request, triggers, bots, isMod, callback) {
-  var regex = /^\/addtrigger (.+?) ([\s\S]+)/i;
+exports.getTriggersHTML = function() {
+  var triggerStr = '<h3>The following custom commands are available:</h3>';
+
+  for (trig in triggers) {
+    triggerStr += '/' + triggers[trig].name + '<br>';
+  }
+
+  return triggerStr;
+}
+
+function addCommandCmd(request, triggers, bots, isMod, callback) {
+  var regex = /^\/addcommand (.+?) ([\s\S]+)/i;
   var reqText = request.text;
 
   if (regex.test(reqText)){
@@ -67,8 +77,39 @@ function addTriggerCmd(request, triggers, bots, isMod, callback) {
 
     triggers.push(trigHash);
     db.addTrigger(trigHash);
-    var msg = val[1] + " trigger added!";
-    callback(true, false, msg, [])
+    var msg = val[1] + " command added!";
+    callback(true, false, msg, []);
+    return msg;
+  }
+}
+
+function describeCmd(request, triggers, bots, isMod, callback) {
+  var regex = /^\/describe (.+?) ([\s\S]+)/i;
+  var reqText = request.text;
+
+  if (regex.test(reqText)){
+    var val = regex.exec(reqText);
+
+    if (!isMod) {
+      var msg = "You don't have permission to describe commands"
+      callback(true, false, msg, []);
+      return msg;
+    }
+
+    for (trigger in triggers) {
+      if (triggers[trigger].name == val[1]) {
+        trigHash = triggers[trigger];
+        trigHash["description"] = val[2];
+        db.updateTrigger(trigHash);
+
+        callback(true, false, msg, []);
+        return msg;
+      }
+    }
+
+    var msg = val[1] + " doesn't exist";
+    callback(true, false, msg, []);
+
     return msg;
   }
 }

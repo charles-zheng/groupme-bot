@@ -124,17 +124,12 @@ function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
 
 function commands() {
   console.log('displaying commands at /commands');
-
+  commandsStr = "<html>"
   //compile custom trigger names
-  var trigs = triggers.getTriggers();
-  var triggerStr = 'The following custom commands are available:<br>';
-  for (trig in trigs) {
-    triggerStr += trigs[trig].name + '<br>';
-  }
+  commandsStr += triggers.getTriggersHTML();
 
-  commandsStr = triggerStr;
-
-  this.res.writeHead(200);
+  commandsStr += "</html>";
+  this.res.writeHead(200, {"Content-Type": "text/html"});
   this.res.end(commandsStr);
 }
 

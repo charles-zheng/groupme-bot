@@ -1,5 +1,5 @@
 var fun_mode = true;
-var sysCommands = [funCmd, noFunCmd, commandsCmd, detailCmd];
+var sysCommands = [funCmd, noFunCmd, detailCmd];
 
 exports.checkSysCommands = function(request, triggers, bots) {
   for (command in sysCommands) {
@@ -40,16 +40,6 @@ function noFunCmd(request, triggers) {
       fun_mode = false;
       return "I'm no fun anymore!";
     }
-  } else {
-    return false;
-  }
-}
-
-function commandsCmd(request, triggers) {
-  var regex = /^\/commands$/i;
-
-  if (regex.test(request.text)) {
-    return "http://nodejs-redditasylum.rhcloud.com/commands";
   } else {
     return false;
   }
