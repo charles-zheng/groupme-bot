@@ -123,15 +123,19 @@ function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
 }
 
 function commands() {
-  var trigs = triggers.getTriggers();
+  console.log('displaying commands at /commands');
 
-  var names = '';
+  //compile custom trigger names
+  var trigs = triggers.getTriggers();
+  var triggerStr = 'The following custom commands are available:<br>';
   for (trig in trigs) {
-    names += trigs[trig].name + ', ';
+    triggerStr += trigs[trig].name + '<br>';
   }
 
+  commandsStr = triggerStr;
+
   this.res.writeHead(200);
-  this.res.end(names.substring(0, names.length - 2));
+  this.res.end(commandsStr);
 }
 
 function postMessage(botResponse, attachments, botID) {
