@@ -41,7 +41,11 @@ exports.getTriggersHTML = function() {
   var triggerStr = '<h3>The following custom commands are available:</h3>';
 
   for (trig in triggers) {
-    triggerStr += '/' + triggers[trig].name + '<br>';
+    triggerStr += '/' + triggers[trig].name;
+    if (triggers[trig]["description"]) {
+      triggerStr += ' - ' + triggers[trig]["description"];
+    }
+    triggerStr += '<br>';
   }
 
   return triggerStr;
@@ -98,9 +102,9 @@ function describeCmd(request, triggers, bots, isMod, callback) {
 
     for (trigger in triggers) {
       if (triggers[trigger].name == val[1]) {
-        trigHash = triggers[trigger];
-        trigHash["description"] = val[2];
-        db.updateTrigger(trigHash);
+        triggers[trigger]["description"] = val[2];
+        db.updateTrigger(triggers[trigger]);
+        var msg = val[1] + " description updated";
 
         callback(true, false, msg, []);
         return msg;

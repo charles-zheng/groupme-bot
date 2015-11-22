@@ -45,8 +45,8 @@ exports.addTrigger = function(trigger, callback) {
 exports.updateTrigger = function(trigger, callback) {
   mongoDB.connect(connection_string, function(err, db){
     if(err) throw err;
-    db.collection('triggers').updateOne({"name" : trigger[name]}, {
-      $set: { "description": trigger[description] }
+    db.collection('triggers').updateOne({"name" : trigger["name"]}, {
+      $set: { "description": trigger["description"] }
     }, function(err, result) {
       if (callback)
         callback(results);
