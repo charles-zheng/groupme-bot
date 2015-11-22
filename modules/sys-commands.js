@@ -1,5 +1,5 @@
 var fun_mode = true;
-var sysCommands = [funCmd, noFunCmd, triggersCmd, detailCmd];
+var sysCommands = [funCmd, noFunCmd, commandsCmd, detailCmd];
 
 exports.checkSysCommands = function(request, triggers, bots) {
   for (command in sysCommands) {
@@ -45,16 +45,11 @@ function noFunCmd(request, triggers) {
   }
 }
 
-function triggersCmd(request, triggers) {
-  var regex = /^\/triggers$/i;
+function commandsCmd(request, triggers) {
+  var regex = /^\/commands$/i;
 
   if (regex.test(request.text)) {
-    var names = '';
-    for (trig in triggers) {
-      names += triggers[trig].name + ', ';
-    }
-
-    return names.substring(0, names.length - 2);
+    return "http://nodejs-redditasylum.rhcloud.com/commands";
   } else {
     return false;
   }

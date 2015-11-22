@@ -2,7 +2,7 @@ exports.debug = process.env.DEBUG || false;
 
 exports.bot_owner = {
   name: 'fo0',
-  id: '30802922'
+  id:   '30802922'
 };
 
 exports.bots = {

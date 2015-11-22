@@ -9,30 +9,13 @@ router = new director.http.Router({
   '/'    : {
     get: ping
   },
+  '/commands' : {
+    get: bot.commands
+  },
   '/bot/:botRoom' : {
     get: ping,
     post: bot.respond
-  }
-  /*'/ra'  : {
-    post: bot.respond,
-    get: ping
   },
-  '/raw' : {
-    post: bot.respond,
-    get: ping
-  },
-  '/ral' : {
-    post: bot.respond,
-    get: ping
-  },
-  '/ralv' : {
-    post: bot.respond,
-    get: ping
-  },
-  '/fo0' : {
-    post: bot.respond,
-    get: ping
-  } */
 });
 
 server = http.createServer(function (req, res) {

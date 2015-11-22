@@ -21,7 +21,6 @@ function getMods() {
 function getBot(path) {
   var bot = {};
   path = path.toLowerCase();
-//  var key = path.substring(1, path.length);
 
   if (config.bots[path]) {
     bot.type = path;
@@ -37,7 +36,6 @@ getMods();
 function respond(botRoom) {
   var request = JSON.parse(this.req.chunks[0]);
   var currentBot = getBot(botRoom);
-  //var currentBot = getBot(this.req.url.toLowerCase());
   var isMod = mods.isMod(request.user_id);
   var bots = config.bots;
   var fun_mode = sysCommands.fun_mode();
@@ -124,6 +122,18 @@ function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
   HTTPS.request(options, callback).end();
 }
 
+function commands() {
+  var trigs = triggers.getTriggers();
+
+  var names = '';
+  for (trig in trigs) {
+    names += trigs[trig].name + ', ';
+  }
+
+  this.res.writeHead(200);
+  this.res.end(names.substring(0, names.length - 2));
+}
+
 function postMessage(botResponse, attachments, botID) {
   var options, body, botReq;
 
@@ -159,3 +169,4 @@ function postMessage(botResponse, attachments, botID) {
 }
 
 exports.respond = respond;
+exports.commands = commands;
