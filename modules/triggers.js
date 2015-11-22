@@ -38,16 +38,20 @@ exports.getTriggers = function() {
 }
 
 exports.getTriggersHTML = function() {
-  var triggerStr = '<h3>The following custom commands are available:</h3>';
+  var triggerStr = '<h3>The following custom commands are available:</h3><table>';
 
   for (trig in triggers) {
-    triggerStr += '/' + triggers[trig].name;
+    triggerStr += '<tr>';
+    triggerStr += '<td>/' + triggers[trig].name + '</td>';
     if (triggers[trig]["description"]) {
-      triggerStr += ' - ' + triggers[trig]["description"];
+      triggerStr += '<td>' + triggers[trig]["description"]; + '</td>';
+    } else {
+      triggerStr += '<td></td>';
     }
-    triggerStr += '<br>';
+    triggerStr += '</tr>';
   }
 
+  triggerStr += '</table>';
   return triggerStr;
 }
 
