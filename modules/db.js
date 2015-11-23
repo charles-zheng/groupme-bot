@@ -55,12 +55,40 @@ exports.updateTrigger = function(trigger, callback) {
   });
 }
 
+exports.addSysTrigger = function(trigger, callback) {
+  mongoDB.connect(connection_string, function(err, db) {
+    if(err) throw err;
+    var allDocs = db.collection(db_config.system_triggers_table).insert(trigger, function(err, result){
+      if (callback)
+        callback(result);
+      db.close();
+    });
+  });
+};
+
+exports.updateSysTrigger = function(trigger, callback) {
+  mongoDB.connect(connection_string, function(err, db){
+    if(err) throw err;
+    db.collection(db_config.system_triggers_table).updateOne({"name" : trigger["name"]}, {
+      $set: { "description": trigger["description"] }
+    }, function(err, result) {
+      if (callback)
+        callback(results);
+      db.close();
+    });
+  });
+}
+
 exports.getMods = function(callback) {
   getAllDocuments(db_config.mods_table, callback);
 };
 
 exports.getTriggers = function(callback) {
   getAllDocuments(db_config.triggers_table, callback);
+};
+
+exports.getSysTriggers = function(callback) {
+  getAllDocuments(db_config.system_triggers_table, callback);
 };
 
 exports.findMod = function(mod, callback) {

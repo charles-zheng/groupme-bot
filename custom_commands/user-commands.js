@@ -1,13 +1,18 @@
 var triggers;
-var modCommands = [addCommandCmd, describeCmd];
+var userCommands = [addCommandCmd, describeCmd];
 db = require('../modules/db.js');
+
+//init - make an init function
+db.getTriggers(function(res){
+  triggers = res;
+});
 
 exports.checkCommands = function(dataHash, callback) {
   for (trigger in triggers) {
     trigger = triggers[trigger];
     if ((trigger.system && dataHash.request.system) || (!trigger.system && !dataHash.request.system)) {
       var triggerReg = new RegExp(trigger.regex, "i");
-      if (trigger.bots.indexOf(dataHash.currentBot.type) > -1 && dataHash.request.text && triggerReg.test(dataHash.request.text)){
+      if (dataHash.request.text && triggerReg.test(dataHash.request.text)){
         var val = triggerReg.exec(dataHash.request.text);
         if (!dataHash.funMode && trigger.fun){
           callback(true, false, "Sorry I'm no fun right now.", []);
@@ -22,22 +27,22 @@ exports.checkCommands = function(dataHash, callback) {
     }
   }
 
-  for (cmd in modCommands) {
-    var test = modCommands[cmd](dataHash.request, dataHash.bots, dataHash.isMod, callback);
+  for (cmd in userCommands) {
+    var test = userCommands[cmd](dataHash.request, dataHash.bots, dataHash.isMod, callback);
     if (test)
       return test;
   }
 }
 
-exports.setTriggers = function(triggerHash) {
+exports.setAll = function(triggerHash) {
   triggers = triggerHash;
 }
 
-exports.getTriggers = function() {
+exports.getAll = function() {
   return triggers;
 }
 
-exports.getTriggersHTML = function() {
+exports.getHTML = function() {
   var triggerStr = '<h3>The following custom commands are available:</h3><table>';
 
   for (trig in triggers) {
@@ -85,13 +90,13 @@ function addCommandCmd(request, bots, isMod, callback) {
 
     triggers.push(trigHash);
     db.addTrigger(trigHash);
-    var msg = val[1] + " command added!";
+    var msg = val[1] + " command added! please use /describe " + val[1] + " <description> to add a description for your new command";
     callback(true, false, msg, []);
     return msg;
   }
 }
 
-function describeCmd(request, triggers, bots, isMod, callback) {
+function describeCmd(request, bots, isMod, callback) {
   var regex = /^\/describe (.+?) ([\s\S]+)/i;
   var reqText = request.text;
 

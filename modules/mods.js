@@ -2,6 +2,11 @@ var mods = [];
 var db = require('./db.js');
 var modCommands = [addModCmd];
 
+//init - make an init function
+db.getMods(function(res){
+  mods = res;
+});
+
 exports.checkCommands = function(dataHash, callback) {
   for (command in modCommands) {
     var test = modCommands[command](dataHash.request, dataHash.owner, callback);
