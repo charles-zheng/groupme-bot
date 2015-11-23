@@ -21,13 +21,13 @@ function funCmd(dataHash, callback) {
   if (regex.test(dataHash.request.text)) {
     if (dataHash.isMod) {
       if (fun_mode) {
-        callback(true, "I'm already as much fun as I can be!");
+        callback(true, "I'm already as much fun as I can be!", []);
       } else {
         fun_mode = true;
-        callback(true, "I'm fun again!");
+        callback(true, "I'm fun again!", []);
       }
     } else {
-      callback(true, "You're not the boss of me");
+      callback(true, "You're not the boss of me", []);
     }
   } else {
     return false;
@@ -40,13 +40,13 @@ function noFunCmd(dataHash, callback) {
   if (regex.test(dataHash.request.text)) {
     if(dataHash.isMod) {
       if (!fun_mode) {
-        callback(true, "I can't be any less fun right now.");
+        callback(true, "I can't be any less fun right now.", []);
       } else {
         fun_mode = false;
-        callback(true, "I'm no fun anymore!");
+        callback(true, "I'm no fun anymore!", []);
       }
     } else {
-      callback(true, "You're not the boss of me");
+      callback(true, "You're not the boss of me", []);
     }
   } else {
     return false;

@@ -1,5 +1,7 @@
 var triggers;
-//probaly should have the bot.js create objects for the different modules and set which ones are fun there. would take away some versatility though
+//probaly should have the bot.js create objects for the different modules and set which ones are fun there. would take away some versatility though.
+
+//maybe i'll create a readme for the modules with an object thats properties can set true / false to flag individual commands as fun or not fun
 var fun_command = true;
 //pass these from bot instead of including them here
 var db      = require('../modules/db.js');
@@ -16,11 +18,11 @@ exports.checkCommands = function(dataHash, callback) {
     if (dataHash.request.text && triggerReg.test(dataHash.request.text)){
       var val = triggerReg.exec(dataHash.request.text);
       if (!dataHash.funMode && fun_command){
-        callback(true, "Sorry I'm no fun right now.");
+        callback(true, "Sorry I'm no fun right now.", []);
       } else {
         trigger.val = val[1];
         apiRequest(trigger.apiHost, trigger.apiPath, val[1], trigger.message, trigger.failMessage, function(msg){
-          callback(true, msg);
+          callback(true, msg, []);
         });
       }
       break;

@@ -44,26 +44,24 @@ exports.respond = function(botRoom) {
   if (dataHash.request.sender_type == 'bot') return;
 
   //figure out a way to make the callback params generic, maybe just another datahash
-  mods.checkCommands(dataHash, function(check, result){
-    if (check) sendDelayedMessage(result, [], dataHash.currentBot.id);
+  mods.checkCommands(dataHash, function(check, result, attachments){
+    if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
   });
 
-  sysTriggers.checkCommands(dataHash, function(check, result){
-    if (check) sendDelayedMessage(result, [], dataHash.currentBot.id);
+  sysTriggers.checkCommands(dataHash, function(check, result, attachments){
+    if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
   });
 
-  apiTriggers.checkCommands(dataHash, function(check, result){
-    if (check) sendDelayedMessage(result, [], dataHash.currentBot.id);
+  apiTriggers.checkCommands(dataHash, function(check, result, attachments){
+    if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
   });
 
-  //make an api only module. this idea was interesting but confusing for the average user. also not easy to implement via GME chat
   triggers.checkCommands(dataHash, function(check, result, attachments){
     if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
   });
 
-  //refactor syscommands into a callback that mirros triggers and mods commands checks.
-  sysCommands.checkCommands(dataHash, function(check, result){
-    if (check) sendDelayedMessage(result, [], dataHash.currentBot.id);
+  sysCommands.checkCommands(dataHash, function(check, result, attachments){
+    if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
   });
 }
 

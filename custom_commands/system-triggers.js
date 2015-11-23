@@ -16,7 +16,7 @@ exports.checkCommands = function(dataHash, callback) {
       if (trigger.bots.indexOf(dataHash.currentBot.type) > -1 && dataHash.request.text && triggerReg.test(dataHash.request.text)){
         var val = triggerReg.exec(dataHash.request.text);
 
-        callback(true, trigger.message);
+        callback(true, trigger.message, []);
         break;
       }
     }
@@ -64,14 +64,14 @@ function addCommandCmd(request, bots, isMod, callback) {
 
     if (!isMod) {
       var msg = "You don't have permission to add commands"
-      callback(true, msg);
+      callback(true, msg, []);
       return msg;
     }
 
     for (trigger in triggers) {
       if (triggers[trigger].name == val[1]) {
         var msg = val[1] + " already exists";
-        callback(true, msg);
+        callback(true, msg, []);
         return msg;
       }
     }
@@ -86,7 +86,7 @@ function addCommandCmd(request, bots, isMod, callback) {
     triggers.push(trigHash);
     db.addSysTrigger(trigHash);
     var msg = val[1] + " command added!";
-    callback(true, false, msg, []);
+    callback(true, msg, []);
     return msg;
   }
 }
@@ -100,7 +100,7 @@ function describeCmd(request, bots, isMod, callback) {
 
     if (!isMod) {
       var msg = "You don't have permission to describe commands"
-      callback(true, false, msg, []);
+      callback(true, msg, []);
       return msg;
     }
 
@@ -110,13 +110,13 @@ function describeCmd(request, bots, isMod, callback) {
         db.updateSysTrigger(triggers[trigger]);
         var msg = val[1] + " description updated";
 
-        callback(true, msg);
+        callback(true, msg, []);
         return msg;
       }
     }
 
     var msg = val[1] + " doesn't exist";
-    callback(true, msg);
+    callback(true, msg, []);
 
     return msg;
   }
