@@ -10,20 +10,11 @@ db.getTriggers(function(res){
 exports.checkCommands = function(dataHash, callback) {
   for (trigger in triggers) {
     trigger = triggers[trigger];
-    if ((trigger.system && dataHash.request.system) || (!trigger.system && !dataHash.request.system)) {
-      var triggerReg = new RegExp(trigger.regex, "i");
-      if (dataHash.request.text && triggerReg.test(dataHash.request.text)){
-        var val = triggerReg.exec(dataHash.request.text);
-        if (!dataHash.funMode && trigger.fun){
-          callback(true, false, "Sorry I'm no fun right now.", []);
-        } else if (trigger.apiHost && trigger.apiPath) {
-          trigger.val = val[1];
-          callback(true, true, trigger, trigger.attachments);
-        } else {
-          callback(true, false, trigger.message, trigger.attachments);
-        }
-        break;
-      }
+    var triggerReg = new RegExp(trigger.regex, "i");
+    if (dataHash.request.text && triggerReg.test(dataHash.request.text)){
+      var val = triggerReg.exec(dataHash.request.text);
+      callback(true, trigger.message, trigger.attachments);
+      break;
     }
   }
 
@@ -69,14 +60,14 @@ function addCommandCmd(request, bots, isMod, callback) {
 
     if (!isMod) {
       var msg = "You don't have permission to add commands"
-      callback(true, false, msg, []);
+      callback(true, msg, []);
       return msg;
     }
 
     for (trigger in triggers) {
       if (triggers[trigger].name == val[1]) {
         var msg = val[1] + " already exists";
-        callback(true, false, msg, []);
+        callback(true, msg, []);
         return msg;
       }
     }
@@ -85,13 +76,12 @@ function addCommandCmd(request, bots, isMod, callback) {
       name: val[1],
       regex: "^\/" + val[1] + "$",
       message: val[2],
-      bots: Object.keys(bots)
     };
 
     triggers.push(trigHash);
     db.addTrigger(trigHash);
-    var msg = val[1] + " command added! please use /describe " + val[1] + " <description> to add a description for your new command";
-    callback(true, false, msg, []);
+    var msg = val[1] + " command added! please use \"/describe " + val[1] + " <description>\" to add a description for your new command";
+    callback(true, msg, []);
     return msg;
   }
 }
@@ -105,7 +95,7 @@ function describeCmd(request, bots, isMod, callback) {
 
     if (!isMod) {
       var msg = "You don't have permission to describe commands"
-      callback(true, false, msg, []);
+      callback(true, msg, []);
       return msg;
     }
 
@@ -115,13 +105,13 @@ function describeCmd(request, bots, isMod, callback) {
         db.updateTrigger(triggers[trigger]);
         var msg = val[1] + " description updated";
 
-        callback(true, false, msg, []);
+        callback(true, msg, []);
         return msg;
       }
     }
 
     var msg = val[1] + " doesn't exist";
-    callback(true, false, msg, []);
+    callback(true, msg, []);
 
     return msg;
   }

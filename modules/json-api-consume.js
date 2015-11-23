@@ -1,1 +1,0 @@
-//abstract the api consuming and refactor it into here out of the bot.js

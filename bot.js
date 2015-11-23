@@ -7,6 +7,7 @@ var mods        = require('./modules/mods.js');
 var triggers    = require('./custom_commands/user-commands.js');
 var sysTriggers = require('./custom_commands/system-triggers.js');
 var quotes      = require('./custom_commands/quotes.js');
+var apiTriggers = require('./custom_commands/json-api-cmds.js');
 
 //load config
 var config      = require('./config/config.js');
@@ -51,17 +52,13 @@ exports.respond = function(botRoom) {
     if (check) sendDelayedMessage(result, [], dataHash.currentBot.id);
   });
 
+  apiTriggers.checkCommands(dataHash, function(check, result){
+    if (check) sendDelayedMessage(result, [], dataHash.currentBot.id);
+  });
+
   //make an api only module. this idea was interesting but confusing for the average user. also not easy to implement via GME chat
-  triggers.checkCommands(dataHash, function(check, api, result, attachments){
-    if (check){
-      if (api) {
-        apiRequest(result.apiHost, result.apiPath, trigger.val, result.message, result.failMessage, function(msg) {
-          sendDelayedMessage(msg, result.attachments, dataHash.currentBot.id);
-        });
-      } else {
-        sendDelayedMessage(result, attachments, dataHash.currentBot.id);
-      }
-    }
+  triggers.checkCommands(dataHash, function(check, result, attachments){
+    if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
   });
 
   //refactor syscommands into a callback that mirros triggers and mods commands checks.
@@ -85,41 +82,6 @@ function sendDelayedMessage(msg, attachments, botID) {
   setTimeout(function() {
     postMessage(msg, attachments, botID);
   }, config.delay_time);
-}
-
-function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
-  path = path.replace("$$1", encodeURIComponent(input));
-
-  var options = {
-    hostname: host,
-    path: path
-  };
-  props = returnProperty.split('.');
-
-  callback = function(response) {
-    str = '';
-
-    response.on('data', function(chunk) {
-      str += chunk;
-    });
-
-    response.on('end', function() {
-      str = JSON.parse(str);
-      msg = str;
-
-      for (prop in props) {
-        if (typeof(msg[props[prop]]) !== 'undefined') {
-          msg = msg[props[prop]];
-        } else {
-          msg = failMsg;
-        }
-      }
-
-      apiCallback(msg);
-    });
-  };
-
-  HTTPS.request(options, callback).end();
 }
 
 function postMessage(botResponse, attachments, botID) {

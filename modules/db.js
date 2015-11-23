@@ -91,6 +91,10 @@ exports.getSysTriggers = function(callback) {
   getAllDocuments(db_config.system_triggers_table, callback);
 };
 
+exports.getApiTriggers = function(callback) {
+  getAllDocuments(db_config.api_triggers_table, callback);
+};
+
 exports.findMod = function(mod, callback) {
   mongoDB.connect(connection_string, function(err, db) {
     if(err) throw err;
