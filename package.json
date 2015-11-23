@@ -1,8 +1,7 @@
 {
-<<<<<<< HEAD
-  "name": "node-js-getting-started",
-  "version": "0.1.2",
-  "description": "A sample Node.js app using Express 4",
+  "name": "groupme-bot",
+  "version": "0.0.1",
+  "description": "A bot made for groupme",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -11,51 +10,16 @@
     "director": ""
   },
   "engines": {
-    "node": "0.10.x"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
-  },
-  "keywords": [
-    "node",
-    "heroku",
-    "express"
-  ],
-  "license": "MIT"
-=======
-  "name": "OpenShift-Sample-App",
-  "version": "1.0.0",
-  "description": "OpenShift Sample Application",
-  "keywords": [
-    "OpenShift",
-    "Node.js",
-    "application",
-    "openshift"
-  ],
-  "author": {
-    "name": "OpenShift",
-    "email": "ramr@example.org",
-    "url": "http://www.openshift.com/"
-  },
-  "homepage": "http://www.openshift.com/",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/openshift/origin-server"
-  },
-
-  "engines": {
     "node": ">= 0.6.0",
     "npm": ">= 1.0.0"
   },
-
-  "dependencies": {
-    "express": "~3.4.4"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmatty1983/reddit-asylum"
   },
-  "devDependencies": {},
-  "bundleDependencies": [],
-
-  "private": true,
-  "main": "server.js"
->>>>>>> 70076c6... Creating template
+  "keywords": [
+    "node",
+    "groupme"
+  ],
+  "license": "MIT"
 }

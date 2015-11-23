@@ -1,3 +1,4 @@
+#!/bin/env node
 var http, director, bot, router, server, port;
 
 http        = require('http');
