@@ -43,15 +43,14 @@ function getBot(path) {
 //goal is to create a standard way to consume the command modules
 exports.respond = function(botRoom) {
   var request = JSON.parse(this.req.chunks[0]);
-  var currentBot = getBot(botRoom);
 
   var dataHash = {
     request:      request,
-    currentBot:   currentBot,
+    currentBot:   getBot(botRoom),
     isMod:        mods.isMod(request.user_id),
     bots:         config.bots,
     funMode:      sysCommands.fun_mode(),
-    owner:     config.bot_owner
+    owner:        config.bot_owner
   };
 
   this.res.writeHead(200);
@@ -61,8 +60,7 @@ exports.respond = function(botRoom) {
 
   //figure out a way to make the callback params generic, maybe just another datahash
   mods.checkCommands(dataHash, function(check, result){
-    if (check)
-      sendDelayedMessage(result, [], dataHash.currentBot.id);
+    if (check) sendDelayedMessage(result, [], dataHash.currentBot.id);
   });
 
   //make an api only module. this idea was interesting but confusing for the average user. also not easy to implement via GME chat
@@ -79,9 +77,8 @@ exports.respond = function(botRoom) {
   });
 
   //refactor syscommands into a callback that mirros triggers and mods commands checks.
-  sysCommands.checkSysCommands(dataHash, function(check, result){
-    sendDelayedMessage(result, [], dataHash.currentBot.id);
-      return;
+  sysCommands.checkCommands(dataHash, function(check, result){
+    if (check) sendDelayedMessage(result, [], dataHash.currentBot.id);
   });
 }
 

@@ -23,7 +23,7 @@ exports.checkCommands = function(dataHash, callback) {
   }
 
   for (cmd in modCommands) {
-    var test = modCommands[cmd](dataHash.request, dataHash.triggers, dataHash.bots, dataHash.isMod, callback);
+    var test = modCommands[cmd](dataHash.request, dataHash.bots, dataHash.isMod, callback);
     if (test)
       return test;
   }
@@ -55,12 +55,18 @@ exports.getTriggersHTML = function() {
   return triggerStr;
 }
 
-function addCommandCmd(request, triggers, bots, isMod, callback) {
+function addCommandCmd(request, bots, isMod, callback) {
   var regex = /^\/addcommand (.+?) ([\s\S]+)/i;
   var reqText = request.text;
 
   if (regex.test(reqText)){
     var val = regex.exec(reqText);
+
+    if (!isMod) {
+      var msg = "You don't have permission to add commands"
+      callback(true, false, msg, []);
+      return msg;
+    }
 
     for (trigger in triggers) {
       if (triggers[trigger].name == val[1]) {
@@ -68,12 +74,6 @@ function addCommandCmd(request, triggers, bots, isMod, callback) {
         callback(true, false, msg, []);
         return msg;
       }
-    }
-
-    if (!isMod) {
-      var msg = "You don't have permission to add commands"
-      callback(true, false, msg, []);
-      return msg;
     }
 
     var trigHash = {

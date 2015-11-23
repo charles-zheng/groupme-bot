@@ -1,7 +1,7 @@
 var fun_mode = true;
 var sysCommands = [funCmd, noFunCmd];
 
-exports.checkSysCommands = function(dataHash, callback) {
+exports.checkCommands = function(dataHash, callback) {
   for (command in sysCommands) {
     var test = sysCommands[command](dataHash, callback);
     if (test)
