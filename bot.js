@@ -47,6 +47,10 @@ exports.respond = function(botRoom) {
     if (check) sendDelayedMessage(result, [], dataHash.currentBot.id);
   });
 
+  sysTriggers.checkCommands(dataHash, function(check, result){
+    if (check) sendDelayedMessage(result, [], dataHash.currentBot.id);
+  });
+
   //make an api only module. this idea was interesting but confusing for the average user. also not easy to implement via GME chat
   triggers.checkCommands(dataHash, function(check, api, result, attachments){
     if (check){
