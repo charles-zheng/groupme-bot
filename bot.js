@@ -25,7 +25,9 @@ function getBot(path) {
   return bot;
 }
 
-//goal is to create a standard way to consume the command modules
+//Temporarily just an array of the fuck commands functions. Make an object with configuration values.
+var checkCommandsHSH = [mods, sysTriggers, apiTriggers, triggers, sysCommands];
+
 exports.respond = function(botRoom) {
   var request = JSON.parse(this.req.chunks[0]);
 
@@ -43,6 +45,12 @@ exports.respond = function(botRoom) {
 
   if (dataHash.request.sender_type == 'bot') return;
 
+  for(lib in checkCommandsHSH) {
+    checkCommandsHSH[lib].checkCommands(dataHash, function(check, result, attachments){
+      if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
+    });
+  }
+  /*
   //figure out a way to make the callback params generic, maybe just another datahash
   mods.checkCommands(dataHash, function(check, result, attachments){
     if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
@@ -63,6 +71,7 @@ exports.respond = function(botRoom) {
   sysCommands.checkCommands(dataHash, function(check, result, attachments){
     if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
   });
+*/
 }
 
 exports.commands = function() {
