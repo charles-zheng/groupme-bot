@@ -2,10 +2,16 @@
 var sysCommands = require('./modules/sys-commands.js');
 var db          = require('./modules/db.js');
 var mods        = require('./modules/mods.js');
-var triggers    = require('./modules/triggers.js');
+
+//commands with custom actions
+var triggers    = require('./custom_commands/triggers.js');
+var quotes      = require('./custom_commands/quotes.js');
+
+//load config
 var config      = require('./config/config.js');
 var HTTPS       = require('https');
 
+//initialize data hashes, refactor this!
 function getTriggers() {
   db.getTriggers(function(res){
     triggers.setTriggers(res);
@@ -17,6 +23,10 @@ function getMods() {
     mods.setMods(res);
   });
 }
+
+getTriggers();
+getMods();
+//=======================================
 
 function getBot(path) {
   var bot = {};
@@ -30,55 +40,60 @@ function getBot(path) {
   return bot;
 }
 
-getTriggers();
-getMods();
-
-function respond(botRoom) {
+//goal is to create a standard way to consume the command modules
+exports.respond = function(botRoom) {
   var request = JSON.parse(this.req.chunks[0]);
   var currentBot = getBot(botRoom);
-  var isMod = mods.isMod(request.user_id);
-  var bots = config.bots;
-  var fun_mode = sysCommands.fun_mode();
+
+  var dataHash = {
+    request:      request,
+    currentBot:   currentBot,
+    isMod:        mods.isMod(request.user_id),
+    bots:         config.bots,
+    funMode:      sysCommands.fun_mode(),
+    owner:     config.bot_owner
+  };
 
   this.res.writeHead(200);
   this.res.end();
-  if (request.sender_type == 'bot') {
-    return;
-  }
 
-  mods.checkModCommands(request, config.bot_owner, function(check, result){
+  if (dataHash.request.sender_type == 'bot') return;
+
+  //figure out a way to make the callback params generic, maybe just another datahash
+  mods.checkCommands(dataHash, function(check, result){
     if (check)
-      sendDelayedMessage(result, [], currentBot.id);
+      sendDelayedMessage(result, [], dataHash.currentBot.id);
   });
 
-  triggers.checkTriggerCommands(request, currentBot, fun_mode, bots, isMod, function(check, api, result, attachments){
+  //make an api only module. this idea was interesting but confusing for the average user. also not easy to implement via GME chat
+  triggers.checkCommands(dataHash, function(check, api, result, attachments){
     if (check){
       if (api) {
         apiRequest(result.apiHost, result.apiPath, trigger.val, result.message, result.failMessage, function(msg) {
-          sendDelayedMessage(msg, result.attachments, currentBot.id);
+          sendDelayedMessage(msg, result.attachments, dataHash.currentBot.id);
         });
       } else {
-        sendDelayedMessage(result, attachments, currentBot.id);
+        sendDelayedMessage(result, attachments, dataHash.currentBot.id);
       }
     }
   });
 
-  var checkSys = sysCommands.checkSysCommands(request, triggers.getTriggers());
-
-  if (checkSys) {
-    if (!isMod) {
-      sendDelayedMessage("You're not the boss of me", [], currentBot.id);
+  //refactor syscommands into a callback that mirros triggers and mods commands checks.
+  sysCommands.checkSysCommands(dataHash, function(check, result){
+    sendDelayedMessage(result, [], dataHash.currentBot.id);
       return;
-    }
-
-    sendDelayedMessage(checkSys, [], currentBot.id);
-  }
+  });
 }
 
-function messageTokenReplace(trigger, val) {
-  var str = trigger.message;
+exports.commands = function() {
+  console.log('displaying commands at /commands');
+  commandsStr = "<html>"
 
-  return str;
+  commandsStr += triggers.getTriggersHTML();
+
+  commandsStr += "</html>";
+  this.res.writeHead(200, {"Content-Type": "text/html"});
+  this.res.end(commandsStr);
 }
 
 function sendDelayedMessage(msg, attachments, botID) {
@@ -122,17 +137,6 @@ function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
   HTTPS.request(options, callback).end();
 }
 
-function commands() {
-  console.log('displaying commands at /commands');
-  commandsStr = "<html>"
-  //compile custom trigger names
-  commandsStr += triggers.getTriggersHTML();
-
-  commandsStr += "</html>";
-  this.res.writeHead(200, {"Content-Type": "text/html"});
-  this.res.end(commandsStr);
-}
-
 function postMessage(botResponse, attachments, botID) {
   var options, body, botReq;
 
@@ -166,6 +170,3 @@ function postMessage(botResponse, attachments, botID) {
   });
   botReq.end(JSON.stringify(body));
 }
-
-exports.respond = respond;
-exports.commands = commands;

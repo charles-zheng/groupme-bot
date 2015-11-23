@@ -2,9 +2,9 @@ var mods = [];
 var db = require('./db.js');
 var modCommands = [addModCmd];
 
-exports.checkModCommands = function(request, owner, callback) {
+exports.checkCommands = function(dataHash, callback) {
   for (command in modCommands) {
-    var test = modCommands[command](request, owner, callback);
+    var test = modCommands[command](dataHash.request, dataHash.owner, callback);
     if (test)
       return test;
   }
@@ -56,7 +56,7 @@ function addModCmd(request, owner, callback) {
 
   if (regex.test(request.text)) {
     if (request.user_id != owner.id) {
-      return "You wish you could add mods";
+      callback(true, "You wish you could add mods");
     }
 
     var val = regex.exec(request.text);

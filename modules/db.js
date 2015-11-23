@@ -23,7 +23,7 @@ function getAllDocuments(collection, callback) {
 exports.addMod = function(mod, callback) {
   mongoDB.connect(connection_string, function(err, db) {
     if(err) throw err;
-    var allDocs = db.collection('mods').insert(mod, function(err, result){
+    var allDocs = db.collection(db_config.mods_table).insert(mod, function(err, result){
       if (callback)
         callback(result);
       db.close();
@@ -34,7 +34,7 @@ exports.addMod = function(mod, callback) {
 exports.addTrigger = function(trigger, callback) {
   mongoDB.connect(connection_string, function(err, db) {
     if(err) throw err;
-    var allDocs = db.collection('triggers').insert(trigger, function(err, result){
+    var allDocs = db.collection(db_config.triggers_table).insert(trigger, function(err, result){
       if (callback)
         callback(result);
       db.close();
@@ -45,7 +45,7 @@ exports.addTrigger = function(trigger, callback) {
 exports.updateTrigger = function(trigger, callback) {
   mongoDB.connect(connection_string, function(err, db){
     if(err) throw err;
-    db.collection('triggers').updateOne({"name" : trigger["name"]}, {
+    db.collection(db_config.triggers_table).updateOne({"name" : trigger["name"]}, {
       $set: { "description": trigger["description"] }
     }, function(err, result) {
       if (callback)

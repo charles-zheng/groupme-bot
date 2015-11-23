@@ -1,9 +1,9 @@
 var fun_mode = true;
-var sysCommands = [funCmd, noFunCmd, detailCmd];
+var sysCommands = [funCmd, noFunCmd];
 
-exports.checkSysCommands = function(request, triggers, bots) {
+exports.checkSysCommands = function(dataHash, callback) {
   for (command in sysCommands) {
-    var test = sysCommands[command](request, triggers, bots);
+    var test = sysCommands[command](dataHash, callback);
     if (test)
       return test;
   }
@@ -15,52 +15,39 @@ exports.fun_mode = function(){
   return fun_mode;
 }
 
-function funCmd(request, triggers) {
+function funCmd(dataHash, callback) {
   var regex = /^\/fun$/;
 
-  if (regex.test(request.text)) {
-    if (fun_mode) {
-      return "I'm already as much fun as I can be!";
+  if (regex.test(dataHash.request.text)) {
+    if (dataHash.isMod) {
+      if (fun_mode) {
+        callback(true, "I'm already as much fun as I can be!");
+      } else {
+        fun_mode = true;
+        callback(true, "I'm fun again!");
+      }
     } else {
-      fun_mode = true;
-      return "I'm fun again!";
+      callback(true, "You're not the boss of me");
     }
   } else {
     return false;
   }
 }
 
-function noFunCmd(request, triggers) {
+function noFunCmd(dataHash, callback) {
   var regex = /^\/nofun$/;
 
-  if (regex.test(request.text)) {
-    if (!fun_mode) {
-      return "I can't be any less fun right now.";
+  if (regex.test(dataHash.request.text)) {
+    if(dataHash.isMod) {
+      if (!fun_mode) {
+        callback(true, "I can't be any less fun right now.");
+      } else {
+        fun_mode = false;
+        callback(true, "I'm no fun anymore!");
+      }
     } else {
-      fun_mode = false;
-      return "I'm no fun anymore!";
+      callback(true, "You're not the boss of me");
     }
-  } else {
-    return false;
-  }
-}
-
-function detailCmd(request, triggers) {
-  var regex = /^\/details (.+)/i;
-  var details = null;
-
-  if (regex.test(request.text)) {
-    var val = regex.exec(request.text);
-
-    for (trig in triggers) {
-      if (triggers[trig].name == val[1])
-        details = triggers[trig];
-    }
-    if (!details)
-      return "Command " + val[1] + " not found";
-    details = JSON.stringify(details);
-    details = details.replace(/,/g, ',\n');
-    return "The following triggers are currently active [" + details + "]";
   } else {
     return false;
   }

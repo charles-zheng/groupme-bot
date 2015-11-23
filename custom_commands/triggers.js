@@ -1,15 +1,15 @@
 var triggers;
 var modCommands = [addCommandCmd, describeCmd];
-db = require('./db.js');
+db = require('../modules/db.js');
 
-exports.checkTriggerCommands = function(request, currentBot, funMode, bots, isMod, callback) {
+exports.checkCommands = function(dataHash, callback) {
   for (trigger in triggers) {
     trigger = triggers[trigger];
-    if ((trigger.system && request.system) || (!trigger.system && !request.system)) {
+    if ((trigger.system && dataHash.request.system) || (!trigger.system && !dataHash.request.system)) {
       var triggerReg = new RegExp(trigger.regex, "i");
-      if (trigger.bots.indexOf(currentBot.type) > -1 && request.text && triggerReg.test(request.text)){
-        var val = triggerReg.exec(request.text);
-        if (!funMode && trigger.fun){
+      if (trigger.bots.indexOf(dataHash.currentBot.type) > -1 && dataHash.request.text && triggerReg.test(dataHash.request.text)){
+        var val = triggerReg.exec(dataHash.request.text);
+        if (!dataHash.funMode && trigger.fun){
           callback(true, false, "Sorry I'm no fun right now.", []);
         } else if (trigger.apiHost && trigger.apiPath) {
           trigger.val = val[1];
@@ -23,7 +23,7 @@ exports.checkTriggerCommands = function(request, currentBot, funMode, bots, isMo
   }
 
   for (cmd in modCommands) {
-    var test = modCommands[cmd](request, triggers, bots, isMod, callback);
+    var test = modCommands[cmd](dataHash.request, dataHash.triggers, dataHash.bots, dataHash.isMod, callback);
     if (test)
       return test;
   }
