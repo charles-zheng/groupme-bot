@@ -13,19 +13,7 @@ var apiTriggers = require('./custom_commands/json-api-cmds.js');
 var config      = require('./config/config.js');
 var HTTPS       = require('https');
 
-function getBot(path) {
-  var bot = {};
-  path = path.toLowerCase();
-
-  if (config.bots[path]) {
-    bot.type = path;
-    bot.id = config.bots[path];
-  }
-
-  return bot;
-}
-
-//Temporarily just an array of the fuck commands functions. Make an object with configuration values.
+//Temporarily just an array of the commands functions. Make an object with configuration values.
 var checkCommandsHSH = [mods, sysTriggers, apiTriggers, triggers, sysCommands];
 
 exports.respond = function(botRoom) {
@@ -50,28 +38,6 @@ exports.respond = function(botRoom) {
       if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
     });
   }
-  /*
-  //figure out a way to make the callback params generic, maybe just another datahash
-  mods.checkCommands(dataHash, function(check, result, attachments){
-    if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
-  });
-
-  sysTriggers.checkCommands(dataHash, function(check, result, attachments){
-    if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
-  });
-
-  apiTriggers.checkCommands(dataHash, function(check, result, attachments){
-    if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
-  });
-
-  triggers.checkCommands(dataHash, function(check, result, attachments){
-    if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
-  });
-
-  sysCommands.checkCommands(dataHash, function(check, result, attachments){
-    if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
-  });
-*/
 }
 
 exports.commands = function() {
@@ -83,6 +49,18 @@ exports.commands = function() {
   commandsStr += "</html>";
   this.res.writeHead(200, {"Content-Type": "text/html"});
   this.res.end(commandsStr);
+}
+
+function getBot(path) {
+  var bot = {};
+  path = path.toLowerCase();
+
+  if (config.bots[path]) {
+    bot.type = path;
+    bot.id = config.bots[path];
+  }
+
+  return bot;
 }
 
 function sendDelayedMessage(msg, attachments, botID) {

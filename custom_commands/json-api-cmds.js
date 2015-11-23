@@ -1,6 +1,5 @@
 var triggers;
 //probaly should have the bot.js create objects for the different modules and set which ones are fun there. would take away some versatility though.
-
 //maybe i'll create a readme for the modules with an object thats properties can set true / false to flag individual commands as fun or not fun
 var fun_command = true;
 //pass these from bot instead of including them here
