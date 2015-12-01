@@ -10,11 +10,50 @@ if(process.env.OPENSHIFT_MONGODB_DB_PASSWORD){
   process.env.OPENSHIFT_APP_NAME;
 }
 
+function connect(callback){
+  mongoDB.connect(connection_string, function(err, db) {
+    if(err) throw err;
+    callback(db);
+  });
+}
+
 function getAllDocuments(collection, callback) {
   mongoDB.connect(connection_string, function(err, db) {
     if(err) throw err;
     var allDocs = db.collection(collection).find().toArray(function(err, docs) {
       callback(docs);
+      db.close();
+    });
+  });
+}
+
+exports.getAllDocuments = getAllDocuments;
+
+exports.addDoc = function(collection, doc, callback) {
+  connect(function(db){
+    var ret = db.collection(collection).insert(doc, function(err, result){
+      if (callback)
+        callback(result);
+      db.close();
+    });
+  });
+}
+
+exports.updateOneDoc = function(collection, findJson, updateJson, callback) {
+  connect(function(db){
+    var ret = db.collection(collection).updateOne(findJson, updateJson, function(err, result) {
+      if (callback)
+        callback(result);
+      db.close();
+    })
+  });
+}
+
+exports.removeOneDoc = function(collection, findJson, callback) {
+  connect(function(db){
+    var ret = db.collection(collection).deleteOne(findJson, function(err, result){
+      if (callback)
+        callback(result);
       db.close();
     });
   });
@@ -30,30 +69,6 @@ exports.addMod = function(mod, callback) {
     });
   });
 };
-
-exports.addTrigger = function(trigger, callback) {
-  mongoDB.connect(connection_string, function(err, db) {
-    if(err) throw err;
-    var allDocs = db.collection(db_config.triggers_table).insert(trigger, function(err, result){
-      if (callback)
-        callback(result);
-      db.close();
-    });
-  });
-};
-
-exports.updateTrigger = function(trigger, callback) {
-  mongoDB.connect(connection_string, function(err, db){
-    if(err) throw err;
-    db.collection(db_config.triggers_table).updateOne({"name" : trigger["name"]}, {
-      $set: { "description": trigger["description"] }
-    }, function(err, result) {
-      if (callback)
-        callback(results);
-      db.close();
-    });
-  });
-}
 
 exports.addSysTrigger = function(trigger, callback) {
   mongoDB.connect(connection_string, function(err, db) {
@@ -81,10 +96,6 @@ exports.updateSysTrigger = function(trigger, callback) {
 
 exports.getMods = function(callback) {
   getAllDocuments(db_config.mods_table, callback);
-};
-
-exports.getTriggers = function(callback) {
-  getAllDocuments(db_config.triggers_table, callback);
 };
 
 exports.getSysTriggers = function(callback) {

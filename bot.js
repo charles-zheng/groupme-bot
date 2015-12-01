@@ -4,7 +4,7 @@ var db          = require('./modules/db.js');
 var mods        = require('./modules/mods.js');
 
 //commands with custom actions
-var triggers    = require('./custom_commands/user-commands.js');
+var userCmds    = require('./custom_commands/user-commands.js');
 var sysTriggers = require('./custom_commands/system-triggers.js');
 var quotes      = require('./custom_commands/quotes.js');
 var apiTriggers = require('./custom_commands/json-api-cmds.js');
@@ -14,7 +14,7 @@ var config      = require('./config/config.js');
 var HTTPS       = require('https');
 
 //Temporarily just an array of the commands functions. Make an object with configuration values.
-var checkCommandsHSH = [mods, sysTriggers, apiTriggers, triggers, sysCommands];
+var checkCommandsHSH = [mods, sysTriggers, apiTriggers, userCmds, sysCommands];
 
 exports.respond = function(botRoom) {
   var request = JSON.parse(this.req.chunks[0]);
@@ -32,6 +32,7 @@ exports.respond = function(botRoom) {
   this.res.end();
 
   if (dataHash.request.sender_type == 'bot') return;
+  dataHash.request.text = dataHash.request.text.trim();
 
   for(lib in checkCommandsHSH) {
     checkCommandsHSH[lib].checkCommands(dataHash, function(check, result, attachments){
@@ -44,7 +45,7 @@ exports.commands = function() {
   console.log('displaying commands at /commands');
   commandsStr = "<html>"
 
-  commandsStr += triggers.getHTML();
+  commandsStr += userCmds.getHTML();
 
   commandsStr += "</html>";
   this.res.writeHead(200, {"Content-Type": "text/html"});

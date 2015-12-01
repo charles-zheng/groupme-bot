@@ -1,19 +1,66 @@
-var triggers;
-var userCommands = [addCommandCmd, describeCmd];
-db = require('../modules/db.js');
+//consider factory model / dependecy injection
+var commands;
+var userCommands = [addCmd, describeCmd, editCmd, removeCmd];
+
+var db = require('../modules/db.js');
+var db_table = 'user_triggers';
 
 //init - make an init function
-db.getTriggers(function(res){
-  triggers = res;
-});
+getAllCommands();
 
+//Database managing commands ... not sure if this is the right place for these
+function getAllCommands() {
+  db.getAllDocuments(db_table, function(res){
+    commands = res;
+  });
+}
+
+function addCmdToDB(cmd, callback) {
+  db.addDoc(db_table, cmd, callback);
+}
+
+function updateCmdDB(cmd, updateJson, callback){
+  var findHash = {
+    "name": cmd["name"]
+  };
+
+  db.updateOneDoc(db_table, findHash, updateJson, callback);
+}
+
+function describeCmdDB(cmd, callback) {
+  var updateHash = {
+    $set: {
+      "description": cmd["description"]
+    }
+  };
+
+  updateCmdDB(cmd, updateHash, callback);
+}
+
+function changeMsgCmdDB(cmd, callback) {
+  var updateHash = {
+    $set: {
+      "message": cmd["message"]
+    }
+  };
+
+  updateCmdDB(cmd, updateHash, callback);
+}
+
+function deleteCmdFromDB(cmd, callback){
+  var findJson = { "name": cmd["name"] };
+
+  db.removeOneDoc(db_table, findJson);
+}
+
+//exports
 exports.checkCommands = function(dataHash, callback) {
-  for (trigger in triggers) {
-    trigger = triggers[trigger];
-    var triggerReg = new RegExp(trigger.regex, "i");
-    if (dataHash.request.text && triggerReg.test(dataHash.request.text)){
-      var val = triggerReg.exec(dataHash.request.text);
-      callback(true, trigger.message, trigger.attachments);
+  for (cmd in commands) {
+    cmd = commands[cmd];
+    var cmdReg = new RegExp(cmd.regex, "i");
+    if (dataHash.request.text && cmdReg.test(dataHash.request.text)){
+      var val = cmdReg.exec(dataHash.request.text);
+      callback(true, cmd.message, cmd.attachments);
       break;
     }
   }
@@ -25,34 +72,39 @@ exports.checkCommands = function(dataHash, callback) {
   }
 }
 
-exports.setAll = function(triggerHash) {
-  triggers = triggerHash;
+exports.setAll = function(cmdHash) {
+  commands = cmdHash;
 }
 
 exports.getAll = function() {
-  return triggers;
+  return commands;
 }
 
 exports.getHTML = function() {
-  var triggerStr = '<h3>The following custom commands are available:</h3><table>';
-
-  for (trig in triggers) {
-    triggerStr += '<tr>';
-    triggerStr += '<td>/' + triggers[trig].name + '</td>';
-    if (triggers[trig]["description"]) {
-      triggerStr += '<td>' + triggers[trig]["description"]; + '</td>';
+  var cmdStr = '<h3>The following custom commands are available:</h3><table>';
+  cmdStr += "<tr><td span='2'>Mod Commands</td></tr>";
+  cmdStr += "<tr><td>/cmd add 'name' 'message'</td><td>Add a new command that replies with <message></td></tr>";
+  cmdStr += "<tr><td>/cmd describe 'name' 'description'</td><td>Sets the description of the command for this list</td></tr>";
+  cmdStr += "<tr><td>/cmd edit 'name' 'new message'</td><td>Changes the response of an existing command</td></tr>";
+  cmdStr += "<tr><td>/cmd remove 'name'</td><td>Deletes a command";
+  cmdStr += "<tr><td span='2'>Non Mod Commands</td></tr>";
+  for (cmd in commands) {
+    cmdStr += '<tr>';
+    cmdStr += '<td>/' + commands[cmd].name + '</td>';
+    if (commands[cmd]["description"]) {
+      cmdStr += '<td>' + commands[cmd]["description"]; + '</td>';
     } else {
-      triggerStr += '<td></td>';
+      cmdStr += '<td></td>';
     }
-    triggerStr += '</tr>';
+    cmdStr += '</tr>';
   }
 
-  triggerStr += '</table>';
-  return triggerStr;
+  cmdStr += '</table>';
+  return cmdStr;
 }
 
-function addCommandCmd(request, bots, isMod, callback) {
-  var regex = /^\/addcommand (.+?) ([\s\S]+)/i;
+function addCmd(request, bots, isMod, callback) {
+  var regex = /^\/cmd add (.+?) ([\s\S]+)/i;
   var reqText = request.text;
 
   if (regex.test(reqText)){
@@ -64,30 +116,30 @@ function addCommandCmd(request, bots, isMod, callback) {
       return msg;
     }
 
-    for (trigger in triggers) {
-      if (triggers[trigger].name == val[1]) {
+    for (cmd in commands) {
+      if (commands[cmd].name == val[1]) {
         var msg = val[1] + " already exists";
         callback(true, msg, []);
         return msg;
       }
     }
 
-    var trigHash = {
-      name: val[1],
+    var cmdHash = {
+      name: val[1].toLowerCase(),
       regex: "^\/" + val[1] + "$",
       message: val[2],
     };
 
-    triggers.push(trigHash);
-    db.addTrigger(trigHash);
-    var msg = val[1] + " command added! please use \"/describe " + val[1] + " <description>\" to add a description for your new command";
+    commands.push(cmdHash);
+    addCmdToDB(cmdHash);
+    var msg = val[1] + " command added! please use \"/cmd describe " + val[1] + " <description>\" to add a description for your new command";
     callback(true, msg, []);
     return msg;
   }
 }
 
 function describeCmd(request, bots, isMod, callback) {
-  var regex = /^\/describe (.+?) ([\s\S]+)/i;
+  var regex = /^\/cmd describe (.+?) ([\s\S]+)/i;
   var reqText = request.text;
 
   if (regex.test(reqText)){
@@ -99,12 +151,12 @@ function describeCmd(request, bots, isMod, callback) {
       return msg;
     }
 
-    for (trigger in triggers) {
-      if (triggers[trigger].name == val[1]) {
-        triggers[trigger]["description"] = val[2];
-        db.updateTrigger(triggers[trigger]);
-        var msg = val[1] + " description updated";
+    for (cmd in commands) {
+      if (commands[cmd].name == val[1].toLowerCase()) {
+        commands[cmd]["description"] = val[2];
+        describeCmdDB(commands[cmd]);
 
+        var msg = val[1] + " description updated";
         callback(true, msg, []);
         return msg;
       }
@@ -113,6 +165,68 @@ function describeCmd(request, bots, isMod, callback) {
     var msg = val[1] + " doesn't exist";
     callback(true, msg, []);
 
+    return msg;
+  }
+}
+
+function removeCmd(request, bots, isMod, callback) {
+  var regex = /^\/cmd remove (.+)/i;
+  var reqText = request.text.toLowerCase();
+
+  if (regex.test(reqText)){
+    var val = regex.exec(reqText);
+
+    if (!isMod) {
+      var msg = "You don't have permission to remove commands"
+      callback(true, msg, []);
+      return msg;
+    }
+
+    val[1] = val[1].toLowerCase();
+
+    for (cmd in commands) {
+      if (commands[cmd].name == val[1]) {
+        deleteCmdFromDB(commands[cmd]);
+        commands.splice(cmd, 1);
+        var msg = val[1] + " command deleted for ever and ever and ever and ... you get it.";
+        callback(true, msg, []);
+        return msg;
+      }
+    }
+
+    callback(true, "No such command.", []);
+    return msg;
+  }
+}
+
+
+function editCmd(request, bots, isMod, callback) {
+  var regex = /^\/cmd edit (.+?) ([\s\S]+)/i;
+  var reqText = request.text;
+
+  if (regex.test(reqText)){
+    var val = regex.exec(reqText);
+
+    if (!isMod) {
+      var msg = "You don't have permission to edit commands"
+      callback(true, msg, []);
+      return msg;
+    }
+
+    val[1] = val[1].toLowerCase();
+    for (cmd in commands) {
+      if (commands[cmd].name == val[1]) {
+        commands[cmd].message = val[2];
+        changeMsgCmdDB(commands[cmd]);
+
+        var msg = val[1] + " message updated.";
+        callback(true, msg, []);
+        return msg;
+      }
+    }
+
+    var msg = val[1] + "doesn't exist";
+    callback(true, msg, []);
     return msg;
   }
 }
