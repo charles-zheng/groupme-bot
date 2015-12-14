@@ -13,7 +13,8 @@ exports.bots = {
   ralv: process.env.RALV_BOT_ID,
   rar: process.env.RAR_BOT_ID,
   rabb: process.env.RABB_BOT_ID,
-  bmc: process.env.BMC_BOT_ID
+  bmc: process.env.BMC_BOT_ID,
+  test: process.env.some_var_not_avail
 };
 
 exports.delay_time = 1000;

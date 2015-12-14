@@ -1,20 +1,21 @@
 //load modules
-var sysCommands = require('./modules/sys-commands.js');
-var db          = require('./modules/db.js');
-var mods        = require('./modules/mods.js');
+var sysCommands  = require('./modules/sys-commands.js');
+var db           = require('./modules/db.js');
+var mods         = require('./modules/mods.js');
 
 //commands with custom actions
-var userCmds    = require('./custom_commands/user-commands.js');
-var sysTriggers = require('./custom_commands/system-triggers.js');
-var quotes      = require('./custom_commands/quotes.js');
-var apiTriggers = require('./custom_commands/json-api-cmds.js');
+var userCmds     = require('./custom_commands/user-commands.js');
+var userMentions = require('./custom_commands/user-mentions.js');
+var sysTriggers  = require('./custom_commands/system-triggers.js');
+var quotes       = require('./custom_commands/quotes.js');
+var apiTriggers  = require('./custom_commands/json-api-cmds.js');
 
 //load config
-var config      = require('./config/config.js');
-var HTTPS       = require('https');
+var config       = require('./config/config.js');
+var HTTPS        = require('https');
 
 //Temporarily just an array of the commands functions. Make an object with configuration values.
-var checkCommandsHSH = [mods, sysTriggers, apiTriggers, userCmds, sysCommands];
+var checkCommandsHSH = [mods, sysTriggers, apiTriggers, userCmds, userMentions, sysCommands];
 
 exports.respond = function(botRoom) {
   var request = JSON.parse(this.req.chunks[0]);
@@ -46,7 +47,8 @@ exports.commands = function() {
   commandsStr = "<html>"
 
   commandsStr += userCmds.getHTML();
-
+  commandsStr += "<br><br>";
+  commandsStr  += userMentions.getHTML();
   commandsStr += "</html>";
   this.res.writeHead(200, {"Content-Type": "text/html"});
   this.res.end(commandsStr);

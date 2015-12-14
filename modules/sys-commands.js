@@ -1,5 +1,5 @@
 var fun_mode = true;
-var sysCommands = [funCmd, noFunCmd];
+var sysCommands = [funCmd, noFunCmd, idCmd];
 
 exports.checkCommands = function(dataHash, callback) {
   for (command in sysCommands) {
@@ -48,6 +48,16 @@ function noFunCmd(dataHash, callback) {
     } else {
       callback(true, "You're not the boss of me", []);
     }
+  } else {
+    return false;
+  }
+}
+
+function idCmd(dataHash, callback) {
+  var regex = /^\/id$/;
+
+  if (regex.test(dataHash.request.text)) {
+    callback(true, "Your groupme id is: " + dataHash.request.sender_id);
   } else {
     return false;
   }

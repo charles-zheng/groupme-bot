@@ -59,7 +59,7 @@ function getModNames(){
 }
 
 function addModCmd(request, owner, callback) {
-  var regex = /^\/addmod (.+) (\d+)/;
+  var regex = /^\/mod add (.+) (\d+)/;
 
   if (regex.test(request.text)) {
     if (request.user_id != owner.id) {
