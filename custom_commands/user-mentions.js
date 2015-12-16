@@ -7,6 +7,7 @@ var db_table = 'user_mentions';
 
 //init - make an init function
 getAllMentions();
+exports.modName = "Custom Mentions";
 
 //Database managing commands ... not sure if this is the right place for these
 function getAllMentions() {
@@ -80,29 +81,19 @@ exports.getAll = function() {
   return mentions;
 }
 
-//probably should make a function to return objects of mod commands and non mod commands
-//they can be compiled by some outside command into sortable html for easy viewing
-exports.getHTML = function() {
-  var cmdStr = '<h3>The following custom mentions are available:</h3><table>';
-  cmdStr += "<tr><td span='2'>Mod Commands</td></tr>";
-  cmdStr += "<tr><td>/mention add 'name' 'message'</td><td>Add a new command that replies with <message></td></tr>";
-  cmdStr += "<tr><td>/mention describe 'name' 'description'</td><td>Sets the description of the command for this list</td></tr>";
-  cmdStr += "<tr><td>/mention edit 'name' 'new message'</td><td>Changes the response of an existing command</td></tr>";
-  cmdStr += "<tr><td>/mention remove 'name'</td><td>Deletes a command";
-  cmdStr += "<tr><td span='2'>Non Mod Commands</td></tr>";
+exports.getCmdListDescription = function () {
+  cmdArr = [
+    {cmd: "/mention add 'name' 'message with tags'", desc: "Add a new custom mention", mod: true},
+    {cmd: "/mention describe 'name' 'description'", desc: "Adds a description to a custom mention for this command list", mod: true},
+    {cmd: "/mention edit 'name' 'message with tags'", desc: "Changes the response of an existing mention", mod: true},
+    {cmd: "/mention remove 'name'", desc: "Deletes a custom mention", mod: true}
+  ];
+
   for (mention in mentions) {
-    cmdStr += '<tr>';
-    cmdStr += '<td>@' + mentions[mention].name + '</td>';
-    if (mentions[mention]["description"]) {
-      cmdStr += '<td>' + mentions[mention]["description"]; + '</td>';
-    } else {
-      cmdStr += '<td></td>';
-    }
-    cmdStr += '</tr>';
+    cmdArr.push({cmd: "@" + mentions[mention].name, desc: mentions[mention].description});
   }
 
-  cmdStr += '</table>';
-  return cmdStr;
+  return cmdArr;
 }
 
 function addMention(request, bots, isMod, callback) {

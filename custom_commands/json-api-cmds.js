@@ -10,6 +10,8 @@ db.getApiTriggers(function(res){
   triggers = res;
 });
 
+exports.modName = "Api Commands";
+
 exports.checkCommands = function(dataHash, callback) {
   for (trigger in triggers) {
     trigger = triggers[trigger];
@@ -37,24 +39,9 @@ exports.getAll = function() {
   return triggers;
 }
 
-exports.getHTML = function() {
-  var triggerStr = '<h3>The following custom commands are available:</h3><table>';
-
-  for (trig in triggers) {
-    triggerStr += '<tr>';
-    triggerStr += '<td>/' + triggers[trig].name + '</td>';
-    if (triggers[trig]["description"]) {
-      triggerStr += '<td>' + triggers[trig]["description"]; + '</td>';
-    } else {
-      triggerStr += '<td></td>';
-    }
-    triggerStr += '</tr>';
-  }
-
-  triggerStr += '</table>';
-  return triggerStr;
+exports.getCmdListDescription = function () {
+  return null;
 }
-
 
 function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
   path = path.replace("$$1", encodeURIComponent(input));

@@ -8,6 +8,8 @@ db.getSysTriggers(function(res){
   triggers = res;
 });
 
+exports.modName = "System Triggers";
+
 exports.checkCommands = function(dataHash, callback) {
   if (dataHash.request.system) {
     for (trigger in triggers) {
@@ -37,22 +39,8 @@ exports.getAll = function() {
   return triggers;
 }
 
-exports.getHTML = function() {
-  var triggerStr = '<h3>The following system triggers are active:</h3><table>';
-
-  for (trig in triggers) {
-    triggerStr += '<tr>';
-    triggerStr += '<td>' + triggers[trig].name + '</td>';
-    if (triggers[trig]["description"]) {
-      triggerStr += '<td>' + triggers[trig]["description"]; + '</td>';
-    } else {
-      triggerStr += '<td></td>';
-    }
-    triggerStr += '</tr>';
-  }
-
-  triggerStr += '</table>';
-  return triggerStr;
+exports.getCmdListDescription = function () {
+  return null;
 }
 
 function addCommandCmd(request, bots, isMod, callback) {

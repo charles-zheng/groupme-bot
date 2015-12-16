@@ -1,6 +1,8 @@
 var fun_mode = true;
 var sysCommands = [funCmd, noFunCmd, idCmd];
 
+exports.modName = "System Commands";
+
 exports.checkCommands = function(dataHash, callback) {
   for (command in sysCommands) {
     var test = sysCommands[command](dataHash, callback);
@@ -13,6 +15,14 @@ exports.checkCommands = function(dataHash, callback) {
 
 exports.fun_mode = function(){
   return fun_mode;
+}
+
+exports.getCmdListDescription = function () {
+  return [
+    {cmd: "/fun", desc: "Enable commands designated as fun commands", mod: true},
+    {cmd: "/nofun", desc: "Disable commands designated as fun commands", mod: true},
+    {cmd: "/id", desc: "Notifies the requester of their GroupMe ID"}
+  ];
 }
 
 function funCmd(dataHash, callback) {

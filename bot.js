@@ -2,6 +2,7 @@
 var sysCommands  = require('./modules/sys-commands.js');
 var db           = require('./modules/db.js');
 var mods         = require('./modules/mods.js');
+var commandList  = require('./modules/command-list.js');
 
 //commands with custom actions
 var userCmds     = require('./custom_commands/user-commands.js');
@@ -43,15 +44,20 @@ exports.respond = function(botRoom) {
 }
 
 exports.commands = function() {
-  console.log('displaying commands at /commands');
-  commandsStr = "<html>"
+  var cmdArr = [];
 
-  commandsStr += userCmds.getHTML();
-  commandsStr += "<br><br>";
-  commandsStr  += userMentions.getHTML();
-  commandsStr += "</html>";
+  console.log('displaying commands at /commands');
+
+  for(lib in checkCommandsHSH){
+    var newCmds = checkCommandsHSH[lib].getCmdListDescription();
+    if (newCmds)
+      cmdArr = cmdArr.concat(newCmds);
+  }
+
+  var output = commandList.buildHTML(cmdArr, config);
+
   this.res.writeHead(200, {"Content-Type": "text/html"});
-  this.res.end(commandsStr);
+  this.res.end(output);
 }
 
 function getBot(path) {

@@ -7,6 +7,7 @@ var db_table = 'user_triggers';
 
 //init - make an init function
 getAllCommands();
+exports.modName = "Custom Commands";
 
 //Database managing commands ... not sure if this is the right place for these
 function getAllCommands() {
@@ -80,28 +81,21 @@ exports.getAll = function() {
   return commands;
 }
 
-exports.getHTML = function() {
-  var cmdStr = '<h3>The following custom commands are available:</h3><table>';
-  cmdStr += "<tr><td span='2'>Mod Commands</td></tr>";
-  cmdStr += "<tr><td>/cmd add 'name' 'message'</td><td>Add a new command that replies with <message></td></tr>";
-  cmdStr += "<tr><td>/cmd describe 'name' 'description'</td><td>Sets the description of the command for this list</td></tr>";
-  cmdStr += "<tr><td>/cmd edit 'name' 'new message'</td><td>Changes the response of an existing command</td></tr>";
-  cmdStr += "<tr><td>/cmd remove 'name'</td><td>Deletes a command";
-  cmdStr += "<tr><td span='2'>Non Mod Commands</td></tr>";
+exports.getCmdListDescription = function () {
+  cmdArr = [
+    {cmd: "/cmd add 'name' 'message'", desc: "Add a new custom command", mod: true},
+    {cmd: "/cmd describe 'name' 'description'", desc: "Adds a description to a custom command for this command list", mod: true},
+    {cmd: "/cmd edit 'name' 'message with tags'", desc: "Changes the response of an existing command", mod: true},
+    {cmd: "/cmd remove 'name'", desc: "Deletes a custom command", mod: true}
+  ];
+
   for (cmd in commands) {
-    cmdStr += '<tr>';
-    cmdStr += '<td>/' + commands[cmd].name + '</td>';
-    if (commands[cmd]["description"]) {
-      cmdStr += '<td>' + commands[cmd]["description"]; + '</td>';
-    } else {
-      cmdStr += '<td></td>';
-    }
-    cmdStr += '</tr>';
+    cmdArr.push({cmd: "/" + commands[cmd].name, desc: commands[cmd].description});
   }
 
-  cmdStr += '</table>';
-  return cmdStr;
+  return cmdArr;
 }
+
 
 function addCmd(request, bots, isMod, callback) {
   var regex = /^\/cmd add (.+?) ([\s\S]+)/i;

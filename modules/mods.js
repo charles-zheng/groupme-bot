@@ -6,6 +6,7 @@ var modCommands = [addModCmd, listModsCmd];
 db.getMods(function(res){
   mods = res;
 });
+exports.modName = "Mod Control";
 
 exports.checkCommands = function(dataHash, callback) {
   for (command in modCommands) {
@@ -49,6 +50,13 @@ exports.addMod = function(modHash) {
   mods.push(modHash);
 }
 
+exports.getCmdListDescription = function () {
+  return [
+    {cmd: "/mod add 'name' 'id'", desc: "Owner command to add mods", owner: true},
+    {cmd: "/mod list", desc: "List names of current mods"}
+  ];
+}
+
 function getModNames(){
   var names = [];
 
@@ -83,7 +91,7 @@ function addModCmd(request, owner, callback) {
 }
 
 function listModsCmd(request, owner, callback) {
-  var regex = /^\/mods$/;
+  var regex = /^\/mod list$/;
 
   if (regex.test(request.text)) {
     var str = "Current mods are: "

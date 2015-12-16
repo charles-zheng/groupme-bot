@@ -8,19 +8,23 @@ exports.bot_owner = {
 var botName = process.env.BOT_NAME;
 
 if (botName == 'asylum') {
+  exports.bot_name = 'Reddit Asylum Bot';
   exports.bots = {
-    ra: process.env.RA_BOT_ID,
-    raw: process.env.RAW_BOT_ID,
-    ral: process.env.RAL_BOT_ID,
-    fo0: process.env.FO0_BOT_ID,
+    ra  : process.env.RA_BOT_ID,
+    raw : process.env.RAW_BOT_ID,
+    ral : process.env.RAL_BOT_ID,
+    fo0 : process.env.FO0_BOT_ID,
     ralv: process.env.RALV_BOT_ID,
-    rar: process.env.RAR_BOT_ID,
+    rar : process.env.RAR_BOT_ID,
     rabb: process.env.RABB_BOT_ID,
-    bmc: process.env.BMC_BOT_ID
+    bmc : process.env.BMC_BOT_ID
   };
 } else if (botName == 'dark') {
+  exports.bot_name = 'Reddit Dark Bot';
   exports.bots = {
-    bffs: process.env.BFFS_BOT_ID
+    bffs   : process.env.BFFS_BOT_ID,
+    testing: process.env.TESTING_BOT_ID,
+    darkwar: process.env.DARKWAR_BOT_ID
   };
 }
 
