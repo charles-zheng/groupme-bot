@@ -18,6 +18,7 @@ function init() {
   });
 }
 
+//feels pointless, come up with a better way to do this
 function getFileAll(path, callback) {
   fs.readFile(path, 'utf8', function(err, data){
     callback(data);
@@ -50,6 +51,7 @@ exports.buildHTML = function (cmdArray, config) {
       allArr.push(cmdArray[cmd]);
   }
 
+  //put this repetitive code in a function ... you're better than this
   var allBuiltHTML   = '';
   var modBuiltHTML   = '';
   var ownerBuiltHTML = '';
