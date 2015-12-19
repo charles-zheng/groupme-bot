@@ -2,7 +2,8 @@ exports.debug = process.env.DEBUG || false;
 
 exports.bot_owner = {
   name: process.env.BOT_OWNER_NAME,
-  id:   process.env.BOT_OWNER_ID //'30802922'
+  id:   process.env.BOT_OWNER_ID,
+  access_token: process.env.BOT_ACCESS_TOKEN
 };
 
 var botName = process.env.BOT_NAME;

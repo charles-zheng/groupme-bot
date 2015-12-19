@@ -72,6 +72,7 @@ function addModCmd(request, owner, callback) {
   if (regex.test(request.text)) {
     if (request.user_id != owner.id) {
       callback(true, "You wish you could add mods", []);
+      return "You wish you could add mods.";
     }
 
     var val = regex.exec(request.text);

@@ -185,7 +185,7 @@ function removeMention(request, bots, isMod, callback) {
       if (mentions[mention].name == val[1]) {
         deleteMentionFromDB(mentions[mention]);
         mentions.splice(mention, 1);
-        var msg = val[1] + " mention is gone. Don't worry though if did this by mistake you can't undo it.. oh wait.. worry on.";
+        var msg = val[1] + " mention is gone. Don't worry though if you did this by mistake you can't undo it.. oh wait.. worry on.";
         callback(true, msg, []);
         return msg;
       }
