@@ -18,7 +18,8 @@ if (botName == 'asylum') {
     ralv: process.env.RALV_BOT_ID,
     rar : process.env.RAR_BOT_ID,
     rabb: process.env.RABB_BOT_ID,
-    bmc : process.env.BMC_BOT_ID
+    bmc : process.env.BMC_BOT_ID,
+    hp  : process.env.HP_BOT_ID
   };
 } else if (botName == 'dark') {
   exports.bot_name = 'Reddit Dark Bot';
