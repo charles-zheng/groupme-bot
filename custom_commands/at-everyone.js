@@ -29,7 +29,7 @@ function cmdAtEveryone(request, bots, isMod, owner, callback) {
     var val = regex.exec(reqText);
 
     if (!isMod) {
-      var msg = "You don't have permission to add mentions"
+      var msg = "You don't have permission to ping everyone";
       callback(true, msg, []);
       return msg;
     }
