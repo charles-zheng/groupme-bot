@@ -28,6 +28,11 @@ if (botName == 'asylum') {
     testing: process.env.TESTING_BOT_ID,
     darkwar: process.env.DARKWAR_BOT_ID
   };
+} else if (botName =='clive') {
+  exports.bot_name = 'Chicago Live Bot';
+  exports.bots = {
+    clive : process.env.CLIVE_BOT_ID
+  }
 }
 
 exports.delay_time = 1000;

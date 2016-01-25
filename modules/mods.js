@@ -52,7 +52,7 @@ exports.addMod = function(modHash) {
 
 exports.getCmdListDescription = function () {
   return [
-    {cmd: "/mod add 'name' 'id'", desc: "Owner command to add mods", owner: true},
+    {cmd: "/mod add 'name' 'tag the user'", desc: "Owner command to add mods", owner: true},
     {cmd: "/mod list", desc: "List names of current mods"}
   ];
 }
@@ -67,7 +67,7 @@ function getModNames(){
 }
 
 function addModCmd(request, owner, callback) {
-  var regex = /^\/mod add (.+) (\d+)/;
+  var regex = /^\/mod add (.+?) ([\s\S]+)/i;
 
   if (regex.test(request.text)) {
     if (request.user_id != owner.id) {
@@ -75,7 +75,13 @@ function addModCmd(request, owner, callback) {
       return "You wish you could add mods.";
     }
 
+    if (!request.attachments[0].user_ids){
+      callback(true, "You have to mention the user you want to mod using @");
+      return "You have to mention the user you want to mod user @";
+    }
+
     var val = regex.exec(request.text);
+    val[2] = request.attachments[0].user_ids[0];
     db.findMod(val[1], function(res){
       if (res) {
         callback(true, "User already a mod", []);
