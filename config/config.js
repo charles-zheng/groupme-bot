@@ -34,6 +34,11 @@ if (botName == 'asylum') {
   exports.bots = {
     clive : process.env.CLIVE_BOT_ID
   }
+} else if (botName == 'clpub') {
+  exports.bot_name = 'Chicago Live Bot';
+  exports.bots = {
+    clpub : process.env.CLPUB_BOT_ID
+  }
 }
 
 exports.delay_time = 1000;
