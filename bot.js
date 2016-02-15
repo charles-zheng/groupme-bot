@@ -12,13 +12,14 @@ var quotes       = require('./custom_commands/quotes.js');
 var apiTriggers  = require('./custom_commands/json-api-cmds.js');
 var atEveryone   = require('./custom_commands/at-everyone.js');
 var funCommands  = require('./custom_commands/fun-commands.js');
+var quotes       = require('./custom_commands/quotes.js');
 
 //load config
 var config       = require('./config/config.js');
 var HTTPS        = require('https');
 
 //Temporarily just an array of the commands functions. Make an object with configuration values.
-var checkCommandsHSH = [mods, sysTriggers, apiTriggers, userCmds, userMentions, sysCommands, atEveryone, funCommands];
+var checkCommandsHSH = [mods, sysTriggers, apiTriggers, userCmds, userMentions, sysCommands, atEveryone, funCommands, quotes];
 
 exports.respond = function(botRoom) {
   var request = JSON.parse(this.req.chunks[0]);
