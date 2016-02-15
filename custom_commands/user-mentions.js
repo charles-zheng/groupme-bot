@@ -38,10 +38,11 @@ function describeMentionDB(mention, callback) {
   updateMentionDB(mention, updateHash, callback);
 }
 
-function changeMsgMentionDB(mention, callback) {
+function editMentionDB(mention, callback) {
   var updateHash = {
     $set: {
-      "message": mention["message"]
+      "message": mention["message"],
+      "attachments": mention["attachments"]
     }
   };
 
@@ -196,7 +197,6 @@ function removeMention(request, bots, isMod, callback) {
   }
 }
 
-
 function editMention(request, bots, isMod, callback) {
   var regex = /^\/mention edit (.+?) ([\s\S]+)/i;
   var reqText = request.text;
@@ -218,7 +218,7 @@ function editMention(request, bots, isMod, callback) {
       if (mentions[mention].name == val[1]) {
         mentions[mention].message = val[2];
         mentions[mention].attachments = request.attachments;
-        changeMsgMentionDB(mentions[mention]);
+        editMentionDB(mentions[mention]);
 
         var msg = val[1] + " message updated.";
         callback(true, msg, []);
