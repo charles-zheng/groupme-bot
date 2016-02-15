@@ -29,6 +29,19 @@ function getAllDocuments(collection, callback) {
 
 exports.getAllDocuments = getAllDocuments;
 
+exports.findDocs = function(collection, matchHash, callback) {
+  connect(function(db){
+    var cursor = db.collection(collection).find(matchHash);
+    var ret = [];
+    cursor.each(function(err, doc){
+      if(doc != null)
+        ret.push(doc);
+      else
+        callback(ret);
+    });
+  });
+}
+
 exports.addDoc = function(collection, doc, callback) {
   connect(function(db){
     var ret = db.collection(collection).insert(doc, function(err, result){
@@ -59,17 +72,6 @@ exports.removeOneDoc = function(collection, findJson, callback) {
   });
 }
 
-exports.addMod = function(mod, callback) {
-  mongoDB.connect(connection_string, function(err, db) {
-    if(err) throw err;
-    var allDocs = db.collection(db_config.mods_table).insert(mod, function(err, result){
-      if (callback)
-        callback(result);
-      db.close();
-    });
-  });
-};
-
 exports.addSysTrigger = function(trigger, callback) {
   mongoDB.connect(connection_string, function(err, db) {
     if(err) throw err;
@@ -94,24 +96,10 @@ exports.updateSysTrigger = function(trigger, callback) {
   });
 }
 
-exports.getMods = function(callback) {
-  getAllDocuments(db_config.mods_table, callback);
-};
-
 exports.getSysTriggers = function(callback) {
   getAllDocuments(db_config.system_triggers_table, callback);
 };
 
 exports.getApiTriggers = function(callback) {
   getAllDocuments(db_config.api_triggers_table, callback);
-};
-
-exports.findMod = function(mod, callback) {
-  mongoDB.connect(connection_string, function(err, db) {
-    if(err) throw err;
-    var allDocs = db.collection('mods').findOne({name: mod},function(err, docs){
-      callback(docs);
-      db.close();
-    });
-  });
 };

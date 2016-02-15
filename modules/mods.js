@@ -1,12 +1,30 @@
 var mods = [];
 var db = require('./db.js');
+var db_table = 'mods';
 var modCommands = [addModCmd, listModsCmd];
 
-//init - make an init function
-db.getMods(function(res){
-  mods = res;
-});
+getAllMods();
 exports.modName = "Mod Control";
+
+//Database managing commands ... not sure if this is the right place for these
+function getAllMods() {
+  db.getAllDocuments(db_table, function(res){
+    mods = res;
+  });
+}
+
+function addModToDB(mod, callback) {
+  db.addDoc(db_table, mod, callback);
+}
+
+function findMod(id) {
+  for (mod in mods){
+    if (mods[mod].id == id)
+      return true;
+  }
+
+  return false;
+}
 
 exports.checkCommands = function(dataHash, callback) {
   for (command in modCommands) {
@@ -82,16 +100,14 @@ function addModCmd(request, owner, callback) {
 
     var val = regex.exec(request.text);
     val[2] = request.attachments[0].user_ids[0];
-    db.findMod(val[1], function(res){
-      if (res) {
-        callback(true, "User already a mod", []);
-      } else {
-        var newMod = {name: val[1], id: val[2]};
-        db.addMod(newMod);
-        mods.push(newMod);
-        callback(true, val[1] + " is now a mod.", []);
-      }
-    });
+    if (findMod(val[2])) {
+      callback(true, "User already a mod", []);
+    } else {
+      var newMod = {name: val[1], id: val[2]};
+      addModToDB(newMod);
+      mods.push(newMod);
+      callback(true, val[1] + " is now a mod.", []);
+    }
   } else {
     return false;
   }
