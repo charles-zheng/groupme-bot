@@ -9,6 +9,10 @@ router = new director.http.Router({
   '/'    : {
     get: ping
   },
+  '/init' : {
+    get:  bot.init,
+    post: bot.init
+  },
   '/commands' : {
     get: bot.commands
   },
@@ -20,7 +24,7 @@ router = new director.http.Router({
 
 server = http.createServer(function (req, res) {
   req.chunks = [];
-  console.log(req.headers.host);
+  console.log();
   req.on('data', function (chunk) {
     req.chunks.push(chunk.toString());
   });

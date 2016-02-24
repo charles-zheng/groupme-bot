@@ -3,6 +3,7 @@ var sysCommands  = require('./modules/sys-commands.js');
 var db           = require('./modules/db.js');
 var mods         = require('./modules/mods.js');
 var commandList  = require('./modules/command-list.js');
+var init         = require('./modules/init.js');
 
 //commands with custom actions
 var userCmds     = require('./custom_commands/user-commands.js');
@@ -20,6 +21,14 @@ var HTTPS        = require('https');
 
 //Temporarily just an array of the commands functions. Make an object with configuration values.
 var checkCommandsHSH = [mods, sysTriggers, apiTriggers, userCmds, userMentions, sysCommands, atEveryone, funCommands, quotes];
+
+exports.init = function() {
+  var req = this.req;
+  init.initPage(req, function(body){
+    this.res.writeHead(200, {"Content-Type": "text/html"});
+    this.res.end(body);
+  });
+}
 
 exports.respond = function(botRoom) {
   var request = JSON.parse(this.req.chunks[0]);
