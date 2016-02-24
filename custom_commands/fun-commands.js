@@ -17,7 +17,7 @@ exports.checkCommands = function(dataHash, callback) {
 exports.getCmdListDescription = function () {
   cmdArr = [
     {cmd: "/flipcoin", desc: "Returns heads or tails 50/50 chance", fun: true},
-    {cmd: "/rolldice", desc: "Will simulate a random dice roll", fun: true}
+    {cmd: "/roll #d#", desc: "Will simulate a random dice roll of # number dice and # sides. EX: /roll 2d6 will roll two six sided dice.", fun: true}
   ];
 
   return cmdArr;
@@ -40,7 +40,7 @@ function cmdFlipCoin(request){
 }
 
 function cmdRollDice(request){
-  var regex = /^\/rolldice (\d+)d(\d+)/i;
+  var regex = /^\/roll (\d+)d(\d+)/i;
 
   if (regex.test(request.text)) {
     var val = regex.exec(request.text);

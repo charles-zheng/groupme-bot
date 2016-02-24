@@ -1,14 +1,25 @@
 //A module for handling responses triggered by groupme system messages
 var triggers;
+var db_table = 'system_triggers';
 var sysTriggersCommands = [addCommandCmd, describeCmd];
 db = require('../modules/db.js');
 
-//init - make an init function
-db.getSysTriggers(function(res){
-  triggers = res;
-});
-
+getAllTriggers();
 exports.modName = "System Triggers";
+
+function getAllTriggers() {
+  db.getAllDocuments(db_table, function(res){
+    triggers = res;
+  });
+}
+
+function addSystemTriggerToDB(trigger, callback) {
+  db.addDoc(db_table, trigger, callback);
+}
+
+function updateSystemTriggerDesc(trigger, callback) {
+  db.updateOneDoc(db_table, {"name": trigger.name}, {$set: { "description": trigger.description}}, callback);
+}
 
 exports.checkCommands = function(dataHash, callback) {
   if (dataHash.request.system) {
@@ -51,7 +62,7 @@ function addCommandCmd(request, bots, isMod, callback) {
     var val = regex.exec(reqText);
 
     if (!isMod) {
-      var msg = "You don't have permission to add commands"
+      var msg = request.name + " you have no power here!";
       callback(true, msg, []);
       return msg;
     }
@@ -66,14 +77,14 @@ function addCommandCmd(request, bots, isMod, callback) {
 
     var trigHash = {
       name: val[1],
-      regex: "^\/" + val[1] + "$",
+      regex: val[1],
       message: val[2],
       bots: Object.keys(bots)
     };
 
     triggers.push(trigHash);
-    db.addSysTrigger(trigHash);
-    var msg = val[1] + " command added!";
+    addSystemTriggerToDB(trigHash);
+    var msg = val[1] + " system trigger added!";
     callback(true, msg, []);
     return msg;
   }
@@ -87,7 +98,7 @@ function describeCmd(request, bots, isMod, callback) {
     var val = regex.exec(reqText);
 
     if (!isMod) {
-      var msg = "You don't have permission to describe commands"
+      var msg = request.name + " who you trying to kid?";
       callback(true, msg, []);
       return msg;
     }
@@ -95,7 +106,7 @@ function describeCmd(request, bots, isMod, callback) {
     for (trigger in triggers) {
       if (triggers[trigger].name == val[1]) {
         triggers[trigger]["description"] = val[2];
-        db.updateSysTrigger(triggers[trigger]);
+        updateSystemTriggerDesc(triggers[trigger]);
         var msg = val[1] + " description updated";
 
         callback(true, msg, []);
