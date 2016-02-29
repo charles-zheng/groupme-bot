@@ -1,12 +1,23 @@
-#Asylum Bot
+#What is Groupme Bot?
 
-A simple Node Group Me Bot. Based on https://github.com/groupme/bot-tutorial-nodejs
+A bot built in Node.js that utilizes Groupme's API to create an interactivve bot that lives in 1 or more groupme rooms. It is based on https://github.com/groupme/bot-tutorial-nodejs
 
-Requirements:
-You will need to setup a bot and attach it to your groupme group. You can do that at https://dev.groupme.com/bots.
+#Setting up your own Groupme bot
 
-You then need to setup an evironment variable with your bot's ID. If you're hosting it at openshift.com (recommended) you should install their command line tool and use the command:
+* You can host your Groupme bot where ever it's convienent for you. If you're not sure, I suggest using [Openshift](https://www.openshift.com). I have a video tutorial showing how to get your own bot setup using [Openshift](https://www.openshift.com) [here](not yet).
 
- `rhc env set <Variable>=<Value> <Variable2>=<Value2> -a App_Name`
+* After you have the bot hosted and running you need to create a bot at [https://dev.groupme.com/bots](https://dev.groupme.com/bots).
+    * Click create bot
+    * The room it's in doesn't matter
+    * Check the box that says "Or should this bot receive direct messages for user YourName? (then it won't listen to messages in any group)"
+    * Give the bot a name
+    * You can choose an avatar for your bot by putting in the url of a picture
+    * Use the base URL/bot/config for the Callback URL. For example http://nodejs-mybot.openshift.com/bot/config.
+    * After you save your bot's configuration, copy the Bot ID
+    * Find your bot in your contact list by searching for the name you gave it and send your bot a direct message containing that Bot ID.
+    * Your bot will listen to room configuration commands on this direct message only and has saved your information as the bot owner.
 
- You'll have to add openshift as a remote to be able to deploy to openshift.
+Congratulations! Your new Groupme Bot is up and running! You can now type "/commands" in the direct message with your bot for a list of commands.
+
+#Default Commands and Examples
+... Coming Soon!
