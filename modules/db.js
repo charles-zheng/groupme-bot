@@ -69,3 +69,32 @@ exports.removeOneDoc = function(collection, findJson, callback) {
     });
   });
 }
+
+exports.countDocs = function (collection, callback) {
+  connect(function(db){
+    var ret = db.collection(collection).count(function(err, result){
+      if (callback)
+        callback(result);
+      db.close();
+    });
+  });
+}
+
+exports.randomDoc = function(collection, callback) {
+  connect(function(db){
+    var coll = db.collection(collection);
+    cursor = coll.find({});
+
+    coll.count(function(err, count){
+      var random = Math.floor(Math.random() * count);
+      cursor.skip(random);
+      cursor.limit(1);
+      cursor.each(function(err, doc){
+        if(doc != null){
+          callback(doc);
+          return;
+        }
+      });
+    });
+  });
+}

@@ -2,7 +2,7 @@ var db = require('../modules/db.js');
 
 db_table = 'user_quotes';
 
-cmds = [cmdSaveQuote, cmdRandomQuote];
+cmds = [cmdSaveQuote, cmdRandomQuote, cmdRandomUserQuote];
 
 function saveQuote(quoteHash, callback){
   db.addDoc(db_table, quoteHash, callback);
@@ -10,6 +10,14 @@ function saveQuote(quoteHash, callback){
 
 function findQuotes(id, callback){
   db.findDocs(db_table, {user_id: id}, callback);
+}
+
+function countQuotes(callback){
+  db.countDocs(db_table, callback);
+}
+
+function getOneRandomQuote(callback){
+  db.randomDoc(db_table, callback);
 }
 
 exports.checkCommands = function(dataHash, callBack){
@@ -29,7 +37,8 @@ exports.checkCommands = function(dataHash, callBack){
 exports.getCmdListDescription = function () {
   cmdArr = [
     {cmd: "/quote save @user 'quote text'", desc: "Save a quote from a user", fun: true},
-    {cmd: "/quote @user", desc: "Shares a random quote that's been saved from the user", fun: true}
+    {cmd: "/quote @user", desc: "Shares a random quote that's been saved from the user", fun: true},
+    {cmd: "/quote", desc: "Shares a random quote from all of the saved quotes", fun: true}
   ];
 
   return cmdArr;
@@ -83,7 +92,7 @@ function cmdSaveQuote(request, callback) {
   }
 }
 
-function cmdRandomQuote(request, callback) {
+function cmdRandomUserQuote(request, callback) {
   regex = /^\/quote (.+)/i;
 
   if (regex.test(request.text)){
@@ -96,6 +105,20 @@ function cmdRandomQuote(request, callback) {
         msg = '"' + docs[rnd].quote + '" - ' + docs[rnd].date;
         callback(msg);
       }
+    });
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function cmdRandomQuote(request, callback) {
+  regex = /^\/quote$/i;
+
+  if (regex.test(request.text)){
+    getOneRandomQuote(function(docs){
+      msg = docs.user_name + ': "' + docs.quote + '" - ' + docs.date;
+      callback(msg);
     });
     return true;
   } else {
