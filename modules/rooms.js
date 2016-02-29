@@ -1,18 +1,18 @@
-var db_table = 'bots';
+var db_table = 'rooms';
 var db = require('./db.js');
-var bots;
+var rooms;
 
 getAllBots();
 exports.modName = "Rooms Control";
 
-function getAllBots(){
+function getAllRooms(){
   db.getAllDocuments(db_table, function(res){
-    bots = res;
+    rooms = res;
   });
 }
 
 exports.getRooms = function() {
-  return bots;
+  return rooms;
 }
 
 exports.checkCommands = function(dataHash, callback) {
@@ -21,14 +21,14 @@ exports.checkCommands = function(dataHash, callback) {
 
 exports.getCmdListDescription = function () {
     cmdArr = [
-    {cmd: "/bot add 'name' 'avatar url'", desc: "Add a bot to the current room. The avatar URL is optional.", owner: true}
+    //{cmd: "/room add 'name' 'avatar url' ", desc: "Add a bot to the current room. The avatar URL is optional.", owner: true}
   ];
 
   return cmdArr;
 }
 
-function cmdBotAdd(request, bots, owner, callback) {
-  var regex = /^\/bot add (.+?) ([\s\S]+)/i;
+function cmdRoomAdd(request, bots, owner, callback) {
+  var regex = /^\/room add (.+?) ([\s\S]+)/i;
   var reqText = request.text;
 
   if (regex.test(reqText)){

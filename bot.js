@@ -4,7 +4,7 @@ var db           = require('./modules/db.js');
 var mods         = require('./modules/mods.js');
 var commandList  = require('./modules/command-list.js');
 var init         = require('./modules/init.js');
-var bots        = require('./modules/bots.js');
+var rooms        = require('./modules/rooms.js');
 
 //commands with custom actions
 var userCmds     = require('./custom_commands/user-commands.js');

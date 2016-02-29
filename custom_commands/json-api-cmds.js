@@ -52,14 +52,12 @@ function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
   var options = {
     hostname: host,
     path: path
+    //rejectUnauthorized: false
   };
   props = returnProperty.split('.');
 
-  console.log(props);
-
   callback = function(response) {
     str = '';
-
     response.on('data', function(chunk) {
       str += chunk;
     });
@@ -82,3 +80,17 @@ function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
 
   HTTPS.request(options, callback).end();
 }
+
+/*
+{
+  "apiHost": "api.urbandictionary.com",
+  "apiPath": "/v0/define?term=$$1",
+  "description": "Fun command to get a random urban dictionary definition",
+  "failMessage": "Not even Urban dictionary has a definition for your nonsense.",
+  "fun": true,
+  "message": "list.0.definition",
+  "name": "urban",
+  "regex": "^/urban (.+)",
+  "system": false
+}
+*/
