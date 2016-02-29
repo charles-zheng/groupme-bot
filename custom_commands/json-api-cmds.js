@@ -55,6 +55,8 @@ function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
   };
   props = returnProperty.split('.');
 
+  console.log(props);
+
   callback = function(response) {
     str = '';
 
