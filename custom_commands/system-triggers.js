@@ -2,7 +2,7 @@
 var triggers;
 var db_table = 'system_triggers';
 var sysTriggersCommands = [addCommandCmd, describeCmd];
-db = require('../modules/db.js');
+var db = require('../modules/db.js');
 
 getAllTriggers();
 exports.modName = "System Triggers";

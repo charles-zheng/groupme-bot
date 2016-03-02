@@ -25,7 +25,7 @@ function getFileAll(path, callback) {
   });
 }
 
-exports.buildHTML = function (cmdArray, config) {
+exports.buildHTML = function (cmdArray, bot_name) {
   var modArr   = [];
   var ownerArr = [];
   var allArr   = [];
@@ -75,7 +75,7 @@ exports.buildHTML = function (cmdArray, config) {
   }
 
   var mainBuiltHTML = mainHTML;
-  mainBuiltHTML = mainBuiltHTML.replace('$$bot_name', config.bot_name);
+  mainBuiltHTML = mainBuiltHTML.replace('$$bot_name', bot_name);
   mainBuiltHTML = mainBuiltHTML.replace('$$all', allBuiltHTML);
   mainBuiltHTML = mainBuiltHTML.replace('$$mod', modBuiltHTML);
   mainBuiltHTML = mainBuiltHTML.replace('$$owner', ownerBuiltHTML);

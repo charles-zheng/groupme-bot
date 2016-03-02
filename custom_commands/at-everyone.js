@@ -1,4 +1,3 @@
-//consider factory model / dependecy injection
 var cmds = [cmdAtEveryone];
 var HTTPS  = require('https');
 
@@ -27,6 +26,9 @@ function cmdAtEveryone(request, bots, isMod, owner, callback) {
 
   if (regex.test(reqText)){
     var val = regex.exec(reqText);
+
+    if (!owner.access_token)
+      return;
 
     if (!isMod) {
       var msg = "You don't have permission to ping everyone";

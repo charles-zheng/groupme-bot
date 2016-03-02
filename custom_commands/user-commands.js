@@ -1,15 +1,12 @@
-//consider factory model / dependecy injection
 var commands;
 var userCommands = [addCmd, describeCmd, editCmd, removeCmd];
 
 var db = require('../modules/db.js');
 var db_table = 'user_triggers';
 
-//init - make an init function
 getAllCommands();
 exports.modName = "Custom Commands";
 
-//Database managing commands ... not sure if this is the right place for these
 function getAllCommands() {
   db.getAllDocuments(db_table, function(res){
     commands = res;

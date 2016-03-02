@@ -1,15 +1,12 @@
-//consider factory model / dependecy injection
 var mentions;
 var userMentions = [addMention, describeMention, editMention, removeMention];
 
 var db = require('../modules/db.js');
 var db_table = 'user_mentions';
 
-//init - make an init function
 getAllMentions();
 exports.modName = "Custom Mentions";
 
-//Database managing commands ... not sure if this is the right place for these
 function getAllMentions() {
   db.getAllDocuments(db_table, function(res){
     mentions = res;

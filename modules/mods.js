@@ -6,7 +6,6 @@ var modCommands = [addModCmd, listModsCmd];
 getAllMods();
 exports.modName = "Mod Control";
 
-//Database managing commands ... not sure if this is the right place for these
 function getAllMods() {
   db.getAllDocuments(db_table, function(res){
     mods = res;

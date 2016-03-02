@@ -20,7 +20,7 @@ var config       = require('./config/config.js');
 var HTTPS        = require('https');
 
 //Temporarily just an array of the commands functions. Make an object with configuration values.
-var checkCommandsHSH = [mods, sysTriggers, apiTriggers, userCmds, userMentions, sysCommands, atEveryone, funCommands, quotes];
+var checkCommandsHSH = [mods, sysTriggers, apiTriggers, userCmds, userMentions, sysCommands, atEveryone, funCommands, quotes, rooms];
 
 exports.init = function() {
   var req = this.req;
@@ -35,11 +35,11 @@ exports.respond = function(botRoom) {
 
   var dataHash = {
     request:      request,
-    currentBot:   getBot(botRoom),
+    currentBot:   rooms.getRoom(botRoom),
     isMod:        mods.isMod(request.user_id),
-    bots:         config.bots,
+    bots:         rooms.getRooms(),
     funMode:      sysCommands.fun_mode(),
-    owner:        config.bot_owner
+    owner:        config.env().owner
   };
 
   this.res.writeHead(200);
@@ -50,7 +50,7 @@ exports.respond = function(botRoom) {
 
   for(lib in checkCommandsHSH) {
     checkCommandsHSH[lib].checkCommands(dataHash, function(check, result, attachments){
-      if (check) sendDelayedMessage(result, attachments, dataHash.currentBot.id);
+      if (check) sendDelayedMessage(result, attachments, rooms.getRoom(botRoom).id);
     });
   }
 }
@@ -66,22 +66,10 @@ exports.commands = function() {
       cmdArr = cmdArr.concat(newCmds);
   }
 
-  var output = commandList.buildHTML(cmdArr, config);
+  var output = commandList.buildHTML(cmdArr, config.bot_name);
 
   this.res.writeHead(200, {"Content-Type": "text/html"});
   this.res.end(output);
-}
-
-function getBot(path) {
-  var bot = {};
-  path = path.toLowerCase();
-
-  if (config.bots[path]) {
-    bot.type = path;
-    bot.id = config.bots[path];
-  }
-
-  return bot;
 }
 
 function sendDelayedMessage(msg, attachments, botID) {
