@@ -1,5 +1,5 @@
 var fun_mode = true;
-var sysCommands = [funCmd, noFunCmd, idCmd];
+var sysCommands = [funCmd, noFunCmd, idCmd, aboutCmd];
 
 exports.modName = "System Commands";
 
@@ -21,7 +21,8 @@ exports.getCmdListDescription = function () {
   return [
     {cmd: "/fun", desc: "Enable commands designated as fun commands", mod: true},
     {cmd: "/nofun", desc: "Disable commands designated as fun commands", mod: true},
-    {cmd: "/id", desc: "Notifies the requester of their GroupMe ID"}
+    {cmd: "/id", desc: "Notifies the requester of their GroupMe ID"},
+    {cmd: "/about", desc: "Responds with a short message about the bot"}
   ];
 }
 
@@ -68,6 +69,16 @@ function idCmd(dataHash, callback) {
 
   if (regex.test(dataHash.request.text)) {
     callback(true, "Your groupme id is: " + dataHash.request.sender_id);
+  } else {
+    return false;
+  }
+}
+
+function aboutCmd(dataHash, callback) {
+  var regex = /^\/about$/;
+
+  if (regex.test(dataHash.request.text)) {
+    callback(true, "Groupme Bot Beta Version 0.1 By Fo0. If you're interested the source can be found at:\n\nhttps://github.com/jmatty1983/Groupme-Bot.\n\nFeel free to fork and contribute! Thanks!");
   } else {
     return false;
   }
