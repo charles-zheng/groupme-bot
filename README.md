@@ -23,8 +23,6 @@ Congratulations! Your new Groupme Bot is up and running! You can now type "/comm
 ... Coming Soon!
 
 #ToDo:
-* Fix the @everyone module. Needs a way to set the access token.
 * Make the index.js validate that the request is originating from groupme
-* Hard code a commands command for the user
 * Hard code an about command
 * Have a list of protected commands from the modules / custom modules that can't be over ridden with user added commands

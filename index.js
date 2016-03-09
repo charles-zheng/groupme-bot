@@ -24,7 +24,7 @@ router = new director.http.Router({
 
 server = http.createServer(function (req, res) {
   req.chunks = [];
-  console.log();
+
   req.on('data', function (chunk) {
     req.chunks.push(chunk.toString());
   });

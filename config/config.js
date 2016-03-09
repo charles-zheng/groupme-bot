@@ -3,6 +3,7 @@ var db = require('../modules/db.js');
 var env = {};
 
 exports.debug = process.env.DEBUG || false;
+
 exports.env = function() {
   return env;
 }
@@ -23,5 +24,6 @@ function setConfig(){
   });
 }
 
+exports.setConfig = setConfig;
 exports.bot_name = 'Fo0 Bot';
 exports.delay_time = 1000;
