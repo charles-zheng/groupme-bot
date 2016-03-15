@@ -4,7 +4,7 @@ A bot built in Node.js that utilizes Groupme's API to create an interactivve bot
 
 #Setting up your own Groupme bot
 
-* You can host your Groupme bot where ever it's convienent for you. If you're not sure, I suggest using [Openshift](https://www.openshift.com). I have a video tutorial showing how to get your own bot setup using [Openshift](https://www.openshift.com) [here](not yet).
+* You can host your Groupme bot where ever it's convienent for you. If you're not sure, I suggest using [Openshift](https://www.openshift.com). I have a video tutorial showing how to get your own bot setup using [Openshift](https://www.openshift.com) [Right Here](https://youtu.be/8wh_TRPCEsQ).
 * Create a new group on groupme and DON'T ADD ANYONE
 * After you have the bot hosted and running you need to create a bot at [https://dev.groupme.com/bots](https://dev.groupme.com/bots).
     * Click create bot
