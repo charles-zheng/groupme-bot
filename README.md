@@ -5,17 +5,16 @@ A bot built in Node.js that utilizes Groupme's API to create an interactivve bot
 #Setting up your own Groupme bot
 
 * You can host your Groupme bot where ever it's convienent for you. If you're not sure, I suggest using [Openshift](https://www.openshift.com). I have a video tutorial showing how to get your own bot setup using [Openshift](https://www.openshift.com) [here](not yet).
-
+* Create a new group on groupme and DON'T ADD ANYONE
 * After you have the bot hosted and running you need to create a bot at [https://dev.groupme.com/bots](https://dev.groupme.com/bots).
     * Click create bot
-    * The room it's in doesn't matter
-    * Check the box that says "Or should this bot receive direct messages for user YourName? (then it won't listen to messages in any group)"
+    * Select the new empty room you just created
     * Give the bot a name
     * You can choose an avatar for your bot by putting in the url of a picture
     * Use the base URL/bot/config for the Callback URL. For example http://nodejs-mybot.openshift.com/bot/config.
     * After you save your bot's configuration, copy the Bot ID
-    * Find your bot in your contact list by searching for the name you gave it and send your bot a direct message: /config Bot ID. EX: /config dV82tx6bA6cstUZX7ghY7aho3y
-    * Your bot will listen to room configuration commands on this direct message only and has saved your information as the bot owner.
+    * In the group you created for your bot send a message with: /config Bot ID. EX: /config dV82tx6bA6cstUZX7ghY7aho3y
+    * Your bot will listen to room configuration commands in this group only and has saved your information as the bot owner.
 
 Congratulations! Your new Groupme Bot is up and running! You can now type "/commands" in the direct message with your bot for a list of commands.
 
