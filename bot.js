@@ -48,7 +48,7 @@ exports.respond = function(botRoom) {
   if (dataHash.request.sender_type == 'bot') return;
   dataHash.request.text = dataHash.request.text.trim();
 
-  if (!rooms.getRoom(botRoom).id)
+  if (!rooms.getRoom(botRoom).id && botRoom != 'config')
     return;
 
   for(lib in checkCommandsHSH) {
