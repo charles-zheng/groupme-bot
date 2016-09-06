@@ -20,11 +20,8 @@ function getOneRandomQuote(callback){
 }
 
 exports.checkCommands = function(dataHash, callBack){
-  for (cmd in cmds) {
-    test = cmds[cmd](dataHash.request, function(msg){
-      if (!dataHash.funMode){
-        callback(true, "Sorry I'm no fun right now", []);
-      }
+  for (var cmd in cmds) {
+    var test = cmds[cmd](dataHash.funMode, dataHash.request, function(msg){
       callBack(true, msg, []);
     });
 
@@ -34,7 +31,7 @@ exports.checkCommands = function(dataHash, callBack){
 }
 
 exports.getCmdListDescription = function () {
-  cmdArr = [
+  var cmdArr = [
     {cmd: "/quote save @user 'quote text'", desc: "Save a quote from a user", fun: true},
     {cmd: "/quote @user", desc: "Shares a random quote that's been saved from the user", fun: true},
     {cmd: "/quote", desc: "Shares a random quote from all of the saved quotes", fun: true}
@@ -43,10 +40,15 @@ exports.getCmdListDescription = function () {
   return cmdArr;
 }
 
-function cmdSaveQuote(request, callback) {
-  regex = /^\/quote save ([\s\S]+)/i;
+function cmdSaveQuote(funMode, request, callback) {
+  var regex = /^\/quote save ([\s\S]+)/i;
 
   if (regex.test(request.text)){
+    if(!funMode){
+      callback("Sorry I'm no fun right now.");
+      return "Sorry I'm no fun right now.";
+    }
+    
     var val = regex.exec(request.text);
     var msg = "";
 
@@ -70,9 +72,9 @@ function cmdSaveQuote(request, callback) {
 
 
       var date = new Date();
-      year = date.getFullYear();
-      month = date.getMonth() + 1;
-      day = date.getDate();
+      var year = date.getFullYear();
+      var month = date.getMonth() + 1;
+      var day = date.getDate();
       date = year + "-" + month + "-" + day;
       var quoteHash = {
         user_id: user_id,
@@ -91,17 +93,21 @@ function cmdSaveQuote(request, callback) {
   }
 }
 
-function cmdRandomUserQuote(request, callback) {
-  regex = /^\/quote (.+)/i;
+function cmdRandomUserQuote(funMode, request, callback) {
+  var regex = /^\/quote (.+)/i;
 
   if (regex.test(request.text)){
+    if(!funMode){
+      callback("Sorry I'm no fun right now.");
+      return "Sorry I'm no fun right now.";
+    }
     if (!request.attachments[0].user_ids)
       return "You have to @user for the person you're trying to quote.";
 
     findQuotes(request.attachments[0].user_ids[0], function(docs){
       if (docs.length > 0){
         var rnd = Math.floor(Math.random() * docs.length);
-        msg = '"' + docs[rnd].quote + '" - ' + docs[rnd].date;
+        var msg = '"' + docs[rnd].quote + '" - ' + docs[rnd].date;
         callback(msg);
       }
     });
@@ -111,12 +117,16 @@ function cmdRandomUserQuote(request, callback) {
   }
 }
 
-function cmdRandomQuote(request, callback) {
-  regex = /^\/quote$/i;
+function cmdRandomQuote(funMode, request, callback) {
+  var regex = /^\/quote$/i;
 
   if (regex.test(request.text)){
+    if(!funMode){
+      callback("Sorry I'm no fun right now.");
+      return "Sorry I'm no fun right now.";
+    }
     getOneRandomQuote(function(docs){
-      msg = docs.user_name + ': "' + docs.quote + '" - ' + docs.date;
+      var msg = docs.user_name + ': "' + docs.quote + '" - ' + docs.date;
       callback(msg);
     });
     return true;
