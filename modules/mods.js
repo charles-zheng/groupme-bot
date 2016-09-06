@@ -121,7 +121,7 @@ function addModCmd(request, owner, callback) {
 }
 
 function removeModCmd(request, owner, callback) {
-  var regex = /^\/mod remove (.+?)/i;
+  var regex = /^\/mod remove (.+)/i;
 
   if (regex.test(request.text)) {
     if (request.user_id != owner.id) {
