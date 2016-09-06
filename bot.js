@@ -1,3 +1,5 @@
+/*global init*/
+
 //load modules
 var sysCommands  = require('./modules/sys-commands.js');
 var db           = require('./modules/db.js');
@@ -10,17 +12,19 @@ var userCmds     = require('./custom_commands/user-commands.js');
 var userMentions = require('./custom_commands/user-mentions.js');
 var sysTriggers  = require('./custom_commands/system-triggers.js');
 var quotes       = require('./custom_commands/quotes.js');
-var apiTriggers  = require('./custom_commands/json-api-cmds.js');
+//var apiTriggers  = require('./custom_commands/json-api-cmds.js');
 var atEveryone   = require('./custom_commands/at-everyone.js');
 var funCommands  = require('./custom_commands/fun-commands.js');
 var quotes       = require('./custom_commands/quotes.js');
+var gif          = require('./custom_commands/giphy-api.js');
+var catFact      = require('./custom_commands/cat-fact.js');
 
 //load config
 var config       = require('./config/config.js');
 var HTTPS        = require('https');
 
 //Temporarily just an array of the commands functions. Make an object with configuration values.
-var checkCommandsHSH = [mods, sysTriggers, apiTriggers, userCmds, userMentions, sysCommands, atEveryone, funCommands, quotes, rooms];
+var checkCommandsHSH = [mods, sysTriggers, userCmds, userMentions, sysCommands, atEveryone, funCommands, quotes, rooms, gif, catFact];
 
 exports.init = function() {
   var req = this.req;
@@ -51,7 +55,7 @@ exports.respond = function(botRoom) {
   if (!rooms.getRoom(botRoom).id && botRoom != 'config')
     return;
 
-  for(lib in checkCommandsHSH) {
+  for(var lib in checkCommandsHSH) {
     checkCommandsHSH[lib].checkCommands(dataHash, function(check, result, attachments){
       if (check) sendDelayedMessage(result, attachments, rooms.getRoom(botRoom).id);
     });
@@ -63,7 +67,7 @@ exports.commands = function() {
 
   console.log('displaying commands at /commands');
 
-  for(lib in checkCommandsHSH){
+  for(var lib in checkCommandsHSH){
     var newCmds = checkCommandsHSH[lib].getCmdListDescription();
     if (newCmds)
       cmdArr = cmdArr.concat(newCmds);

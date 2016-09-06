@@ -16,7 +16,7 @@ function getAllTriggers() {
 }
 
 exports.checkCommands = function(dataHash, callback) {
-  for (trigger in triggers) {
+  for (var trigger in triggers) {
     trigger = triggers[trigger];
     var triggerReg = new RegExp(trigger.regex, "i");
     if (dataHash.request.text && triggerReg.test(dataHash.request.text)){
@@ -54,19 +54,19 @@ function apiRequest(host, path, input, returnProperty, failMsg, apiCallback) {
     path: path
     //rejectUnauthorized: false
   };
-  props = returnProperty.split('.');
+  var props = returnProperty.split('.');
 
-  callback = function(response) {
-    str = '';
+  var callback = function(response) {
+    var str = '';
     response.on('data', function(chunk) {
       str += chunk;
     });
 
     response.on('end', function() {
       str = JSON.parse(str);
-      msg = str;
+      var msg = str;
 
-      for (prop in props) {
+      for (var prop in props) {
         if (typeof(msg[props[prop]]) !== 'undefined') {
           msg = msg[props[prop]];
         } else {
