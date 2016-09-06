@@ -19,7 +19,16 @@ A bot built in Node.js that utilizes Groupme's API to create an interactivve bot
 Congratulations! Your new Groupme Bot is up and running! You can now type "/commands" in the direct message with your bot for a list of commands.
 
 #Default Commands and Examples
-... Coming Soon!
+* /mod add <nickname> <@mods name in chat> EX: /mod add fo0 @fo0
+* /mod remove <nickname> EX: /mod remove fo0
+* /cmd add <cmd> <response> EX: /cmd add ping pong
+* /cmd edit <cmd> <new_response> EX: /cmd add ping don't ping me anymore
+* /cmd describe <cmd> <description> EX: /cmd describe ping responds with pong
+* /cmd remove <cmd> EX: /cmd remove ping
+* /mention add <mention_name> <message_with_mods_@'d> EX: /mention add mods Hey mods I need help. @jim @jack @jill
+* /mention edit <mention_name> <new_message> EX: /mention edit mods Just trying to annoy you mods. @jim @jack
+* /mention describe <mention_name> <description> EX: /mention describe mods Pings all the mods
+* /mention remove <mention_name> EX: /mention remove mods
 
 #ToDo:
 * Make the index.js validate that the request is originating from groupme
