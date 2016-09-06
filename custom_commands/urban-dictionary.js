@@ -1,5 +1,5 @@
 var fun_command = true;
-var cmds = [cmdUrban];
+var cmds = [cmdUrban, cmdUrbanRnd];
 
 var HTTPS = require('https');
 
@@ -17,6 +17,48 @@ exports.getCmdListDescription = function () {
   ];
 
   return cmdArr;
+}
+
+function cmdUrbanRnd(funMode, request, callback){
+  var regex = /^\/urban/i;
+  
+  if (regex.test(request)){
+    if(!funMode){
+      callback(true, "Sorry I'm no fun right now.", []);
+      return "Sorry I'm no fun right now.";
+    }
+
+    var options = {
+      hostname: "api.urbandictionary.com",
+      path: "/v0/random",
+      rejectUnauthorized: false
+    };
+
+    var callbackAPI = function(response) {
+      var str = '';
+
+      response.on('data', function(chunk) {
+        str += chunk;
+      });
+
+      response.on('end', function() {
+        str = JSON.parse(str);
+        
+        var msg = '';
+        if (typeof(str.list[0].definition) !== 'undefined'){
+          msg = str.list[0].word + " - " + str.list[0].definition;
+        } else {
+          msg = "That's not even found in a fake internet dictionary.";
+        }
+
+        callback(true, msg, []);
+      });
+    };
+    
+    HTTPS.request(options, callbackAPI).end();
+  } else {
+    return false;
+  }
 }
 
 function cmdUrban(funMode, request, callback){
