@@ -12,19 +12,18 @@ var userCmds     = require('./custom_commands/user-commands.js');
 var userMentions = require('./custom_commands/user-mentions.js');
 var sysTriggers  = require('./custom_commands/system-triggers.js');
 var quotes       = require('./custom_commands/quotes.js');
-//var apiTriggers  = require('./custom_commands/json-api-cmds.js');
 var atEveryone   = require('./custom_commands/at-everyone.js');
 var funCommands  = require('./custom_commands/fun-commands.js');
-var quotes       = require('./custom_commands/quotes.js');
 var gif          = require('./custom_commands/giphy-api.js');
 var catFact      = require('./custom_commands/cat-fact.js');
+var urbanDict    = require('./custom_commands/urban-dictionary.js');
 
 //load config
 var config       = require('./config/config.js');
 var HTTPS        = require('https');
 
 //Temporarily just an array of the commands functions. Make an object with configuration values.
-var checkCommandsHSH = [mods, sysTriggers, userCmds, userMentions, sysCommands, atEveryone, funCommands, quotes, rooms, gif, catFact];
+var checkCommandsHSH = [mods, sysTriggers, userCmds, userMentions, sysCommands, atEveryone, funCommands, quotes, rooms, gif, catFact, urbanDict];
 
 exports.init = function() {
   var req = this.req;
