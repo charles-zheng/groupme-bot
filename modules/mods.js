@@ -1,7 +1,7 @@
 var mods = [];
 var db = require('./db.js');
 var db_table = 'mods';
-var modCommands = [addModCmd, listModsCmd];
+var modCommands = [addModCmd, listModsCmd, removeModCmd];
 
 getAllMods();
 exports.modName = "Mod Control";
@@ -16,8 +16,16 @@ function addModToDB(mod, callback) {
   db.addDoc(db_table, mod, callback);
 }
 
+function deleteModFromDB(mod, callback){
+  var findJson = { "name": mod };
+
+  db.removeOneDoc(db_table, findJson, function(result){
+    getAllMods();
+  });
+}
+
 function findMod(id) {
-  for (mod in mods){
+  for (var mod in mods){
     if (mods[mod].id == id)
       return true;
   }
@@ -26,7 +34,7 @@ function findMod(id) {
 }
 
 exports.checkCommands = function(dataHash, callback) {
-  for (command in modCommands) {
+  for (var command in modCommands) {
     var test = modCommands[command](dataHash.request, dataHash.owner, callback);
     if (test)
       return test;
@@ -40,7 +48,7 @@ exports.getMods = function() {
 }
 
 exports.isMod = function(id) {
-  for (mod in mods) {
+  for (var mod in mods) {
     if (mods[mod].id == id)
       return true;
   }
@@ -51,7 +59,7 @@ exports.isMod = function(id) {
 exports.getModIDs = function() {
   var ids = [];
 
-  for (mod in mods) {
+  for (var mod in mods) {
     ids.push(mods[mod].id);
   }
   return ids;
@@ -77,7 +85,7 @@ exports.getCmdListDescription = function () {
 function getModNames(){
   var names = [];
 
-  for (mod in mods) {
+  for (var mod in mods) {
     names.push(mods[mod].name);
   }
   return names;
@@ -107,6 +115,32 @@ function addModCmd(request, owner, callback) {
       mods.push(newMod);
       callback(true, val[1] + " is now a mod.", []);
     }
+  } else {
+    return false;
+  }
+}
+
+function removeModCmd(request, owner, callback) {
+  var regex = /^\/mod remove (.+?)/i;
+
+  if (regex.test(request.text)) {
+    if (request.user_id != owner.id) {
+      callback(true, "You wish you could remove mods", []);
+      return "You wish you could remove mods.";
+    }
+
+    var val = regex.exec(request.text);
+    var msg;
+    
+    if (getModNames().indexOf(val[1]) != -1){
+      deleteModFromDB(val[1]);
+      msg = val[1] + " is no longer a mod. I'm sure they did something naughty";
+    } else {
+      msg = val[1] + " mod doesn't exist. You can use /mod list to get a current list of mods.";
+    }
+    
+    callback(true, msg, []);
+    return msg;
   } else {
     return false;
   }
