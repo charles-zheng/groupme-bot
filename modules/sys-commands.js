@@ -78,7 +78,7 @@ function aboutCmd(dataHash, callback) {
   var regex = /^\/about$/;
 
   if (regex.test(dataHash.request.text)) {
-    callback(true, "Groupme Bot Beta Version 0.1 By Fo0. If you're interested the source can be found at:\n\nhttps://github.com/jmatty1983/Groupme-Bot.\n\nFeel free to fork and contribute! Thanks!");
+    callback(true, "My name is Downbot. Charles created me with massive help from https://github.com/jmatty1983/Groupme-Bot. I'm here to make our Groupme experience more fun for everyone!");
   } else {
     return false;
   }
