@@ -45,7 +45,7 @@ function cmdRonSwanson(funMode, request, callback){
       response.on('end', function() {
         str = JSON.parse(str);
         
-        var msg = str;
+        var msg = str[0];
         /*if (typeof(str.facts[0]) !== 'undefined'){
           msg = str.facts[0];
         } else {

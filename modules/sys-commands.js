@@ -1,5 +1,5 @@
 var fun_mode = true;
-var sysCommands = [funCmd, noFunCmd, idCmd, aboutCmd];
+var sysCommands = [funCmd, noFunCmd, idCmd, aboutCmd, loveMeCmd];
 
 exports.modName = "System Commands";
 
@@ -79,6 +79,16 @@ function aboutCmd(dataHash, callback) {
 
   if (regex.test(dataHash.request.text)) {
     callback(true, "Hi, my name is Mr. Bot. Charles created me with massive help from https://github.com/jmatty1983/Groupme-Bot. I'm here to make our Groupme experience more fun for everyone!");
+  } else {
+    return false;
+  }
+}
+
+function loveMeCmd(dataHash, callback) {
+  var regex = /^\/loveme$/;
+
+  if (regex.test(dataHash.request.text)) {
+    callback(true, "I love you, " + dataHash.request.name);
   } else {
     return false;
   }
