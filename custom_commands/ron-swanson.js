@@ -19,7 +19,7 @@ exports.getCmdListDescription = function () {
   return cmdArr;
 }
 
-function cmdCatFact(funMode, request, callback){
+function cmdRonSwanson(funMode, request, callback){
   var regex = /^\/ron/i;
   
   if (regex.test(request)){
