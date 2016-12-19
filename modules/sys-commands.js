@@ -78,7 +78,7 @@ function aboutCmd(dataHash, callback) {
   var regex = /^\/about$/;
 
   if (regex.test(dataHash.request.text)) {
-    callback(true, "My name is Downbot. Charles created me with massive help from https://github.com/jmatty1983/Groupme-Bot. I'm here to make our Groupme experience more fun for everyone!");
+    callback(true, "Hi, my name is Mr. Bot. Charles created me with massive help from https://github.com/jmatty1983/Groupme-Bot. I'm here to make our Groupme experience more fun for everyone!");
   } else {
     return false;
   }
